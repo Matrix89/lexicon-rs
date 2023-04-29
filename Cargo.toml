@@ -1,0 +1,25 @@
+[package]
+name = "lexicon-rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+walkdir = "2.3.3"
+quote = "1.0.26"
+proc-macro2 = "1.0.56"
+rust-format = {version = "0.3.4", features = ["token_stream"]}
+convert_case = "0.6.0"
+syn = {version = "2.0.15", features = ["full"]}
+lexicon = { path = "lib/lexicon" }
+codegen = { path = "lib/codegen" }
+nsid = { path = "lib/nsid" }
+
+[workspace]
+members = [
+  "lib/macro",
+  "lib/lexicon",
+  "lib/codegen",
+  "lib/nsid"
+]
