@@ -2,9 +2,11 @@
 
 WIP
 
-(ATProto's)[https://atproto.com/] lexicon to rust - inator
+[ATProto's](https://atproto.com/) lexicon to rust - inator
 
-This is the current output for all the lexicons defined (here)[https://github.com/bluesky-social/atproto/tree/main/lexicons]
+The code is nowhere close to being of any quality as of yet
+
+This is the current output for all the lexicons defined [here](https://github.com/bluesky-social/atproto/tree/main/lexicons)
 
 ```rust
 pub mod Lexicon {
