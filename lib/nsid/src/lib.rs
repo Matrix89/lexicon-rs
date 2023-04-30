@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use lexicon::lexicon::UserType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum NSIDNode {
     Segment {
         name: String,
@@ -89,5 +89,34 @@ impl NSIDNode {
                 }
             }
         }
+    }
+
+    fn find_impl(self: &NSIDNode, path: Vec<&str>, ident: &str) -> Option<UserType> {
+        match self {
+            NSIDNode::Segment { name, children } => {
+                let child = children.iter().find(|child| match child {
+                    NSIDNode::Segment {
+                        name: child_name, ..
+                    } => child_name == path[0],
+                    NSIDNode::Identifier { name, .. } => name == path[0],
+                });
+
+                return child?.find_impl(path[1..].to_vec(), ident);
+            }
+            NSIDNode::Identifier { name, def } => {
+                return def.get(ident).cloned();
+            }
+        }
+    }
+
+    pub fn find(self: &NSIDNode, path: &String) -> Option<UserType> {
+        let mut namespace_ident = path.split("#");
+        let namespace = namespace_ident
+            .next()
+            .unwrap()
+            .split(".")
+            .collect::<Vec<&str>>();
+        let ident = namespace_ident.next().unwrap_or("main");
+        return self.find_impl(namespace, ident);
     }
 }

@@ -11,7 +11,7 @@ type LexObject = HashMap<String, JSONValue>;
 
 pub type JV = JSONValue;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub enum StringFormat {
     Datetime,
@@ -24,7 +24,7 @@ pub enum StringFormat {
     Cid,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub enum Property {
     String {
@@ -37,6 +37,7 @@ pub enum Property {
         max_graphemes: Option<u64>,
         r#enum: Option<Vec<String>>,
         r#const: Option<String>,
+        #[serde(rename = "knownValues")]
         known_values: Option<Vec<String>>,
     },
     Ref {
@@ -44,32 +45,62 @@ pub enum Property {
         r#ref: String,
     },
     Array {
+        description: Option<String>,
         items: Box<Property>,
+        min_length: Option<u64>,
+        max_length: Option<u64>,
     },
-    Integer,
-    Boolean,
-    Blob,
-    Union,
-    Unknown,
-    CidLink,
-    Bytes,
+    Integer {
+        description: Option<String>,
+        default: Option<i64>,
+        minimum: Option<i64>,
+        maximum: Option<i64>,
+        r#enum: Option<Vec<i64>>,
+        r#const: Option<i64>,
+    },
+    Boolean {
+        description: Option<String>,
+        default: Option<bool>,
+        r#const: Option<bool>,
+    },
+    Blob {
+        description: Option<String>,
+        accept: Option<Vec<String>>,
+        max_size: Option<u64>,
+    },
+    Union {
+        description: Option<String>,
+        refs: Vec<String>,
+        closed: Option<bool>,
+    },
+    Unknown {
+        description: Option<String>,
+    },
+    CidLink {
+        description: Option<String>,
+    },
+    Bytes {
+        description: Option<String>,
+        min_length: Option<u64>,
+        max_length: Option<u64>,
+    },
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub struct Parameters {
     pub required: Option<Vec<String>>,
     pub properties: Option<HashMap<String, Property>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Output {
     pub encoding: Option<String>,
     pub schema: Option<Box<UserType>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(tag = "type", rename_all = "lowercase")]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(tag = "type", rename_all = "camelCase")]
 pub enum UserType {
     Record {
         description: Option<String>,
@@ -89,7 +120,7 @@ pub enum UserType {
         description: Option<String>,
         parameters: Option<Parameters>,
         input: Option</* TODO */ JSONValue>,
-        output: Option</* TODO */ JSONValue>,
+        output: Option<Output>,
         errors: Option<Vec</* TODO */ JSONValue>>,
     },
     #[serde(rename = "subscription")]
@@ -136,6 +167,11 @@ pub enum UserType {
         r#enum: Option<Vec<i64>>,
         r#const: Option<i64>,
     },
+    Ref {
+        description: Option<String>,
+        r#ref: String,
+    },
+    #[serde(rename_all = "camelCase")]
     String {
         description: Option<String>,
         default: Option<String>,

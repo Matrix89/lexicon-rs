@@ -1,10 +1,8 @@
-use convert_case::{Case, Casing};
-use lexicon::lexicon::{LexiconDoc, Parameters, Property, UserType};
+use codegen::CodeGen;
+use lexicon::lexicon::LexiconDoc;
 use nsid::NSIDNode;
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote};
 use rust_format::{Formatter, RustFmt};
-use std::{collections::HashMap, fs, str::FromStr};
+use std::{fs, str::FromStr};
 use walkdir::WalkDir;
 
 fn main() {
@@ -22,106 +20,28 @@ fn main() {
 
     let mut root = NSIDNode::root();
 
-    for lexicon in lexicons {
+    for lexicon in lexicons
+    //.skip(50)
+    /*.take(15)*/
+    {
         //println!("{}:", lexicon.id);
         root.add(&lexicon.id, lexicon.defs);
     }
 
-    let tokens = gen(root);
+    let gen = CodeGen::new(root.clone());
+
+    let tokens = gen.gen(root, &"".to_owned());
     println!("Gen ok");
-    let src = RustFmt::default()
-        .format_str(tokens.to_string().replace("{", "{\n").replace("}", "}\n"))
+    let src = RustFmt::default().format_str(tokens.to_string()).unwrap();
+    //println!("{}", src);
+
+    fs::remove_file("/tmp/lex.rs").unwrap();
+    fs::write("/tmp/lex.rs", src).unwrap();
+    std::process::Command::new("rustc")
+        .stdout(std::process::Stdio::inherit())
+        .arg("/tmp/lex.rs")
+        .spawn()
+        .unwrap()
+        .wait()
         .unwrap();
-    println!("{}", src);
-}
-
-fn gen_def(def: (String, UserType)) -> TokenStream {
-    let name = format_ident!("{}", def.0.to_case(Case::Pascal));
-    match def.1 {
-        UserType::Object {
-            description,
-            required,
-            nullable,
-            properties,
-        } => codegen::lex::object::gen_object(
-            &def.0,
-            description.unwrap_or_else(|| "".to_owned()),
-            required.unwrap_or_default(),
-            nullable.unwrap_or_default(),
-            properties.unwrap_or_default(),
-        ),
-        UserType::XrpcQuery {
-            description,
-            parameters,
-            output,
-            errors,
-        } => codegen::xrpc::query::gen_query(def.0, description, parameters, output, errors),
-        UserType::XrpcProcedure {
-            description,
-            parameters,
-            input,
-            output,
-            errors,
-        } => codegen::xrpc::procedure::gen_procedure(
-            def.0,
-            description,
-            parameters,
-            input,
-            output,
-            errors,
-        ),
-        UserType::XrpcSubscription {
-            description,
-            parameters,
-            message,
-            infos,
-            errors,
-        } => codegen::xrpc::subscription::gen_subscription(
-            def.0,
-            description,
-            parameters,
-            message,
-            infos,
-            errors,
-        ),
-        UserType::Token { description } => {
-            let name = format_ident!("{}", def.0);
-            let desc = format!("{:?}", description);
-            quote! {
-                #[doc=#desc]
-                pub struct #name {}
-            }
-        }
-        v => {
-            let name = format_ident!("todo_{}", def.0);
-            let desc = format!("{:?}", v);
-            quote! {
-                #[doc=#desc]
-                pub struct #name {}
-            }
-        }
-    }
-}
-
-fn gen(tree: NSIDNode) -> TokenStream {
-    match tree {
-        NSIDNode::Segment { name, children } => {
-            let children = children.into_iter().map(gen);
-            let name = format_ident!("{}", name.to_case(Case::UpperCamel));
-            quote! {
-                pub mod #name {
-                    #(#children)*
-                }
-            }
-        }
-        NSIDNode::Identifier { name, def } => {
-            let defs = def.into_iter().map(gen_def);
-            let name = format_ident!("{}", name.to_case(Case::UpperCamel));
-            quote! {
-                pub mod #name {
-                    #(#defs)*
-                }
-            }
-        }
-    }
 }

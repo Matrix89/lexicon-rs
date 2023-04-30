@@ -21,5 +21,6 @@ members = [
   "lib/macro",
   "lib/lexicon",
   "lib/codegen",
-  "lib/nsid"
+  "lib/nsid",
+  "lib/test"
 ]
