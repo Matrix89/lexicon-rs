@@ -39,6 +39,8 @@ fn main() {
     fs::write("/tmp/lex.rs", src).unwrap();
     std::process::Command::new("rustc")
         .stdout(std::process::Stdio::inherit())
+        .arg("--crate-type")
+        .arg("lib")
         .arg("/tmp/lex.rs")
         .spawn()
         .unwrap()

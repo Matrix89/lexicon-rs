@@ -7,8 +7,6 @@ pub type XrpcParameter = String;
 pub type XrpcBody = String;
 pub type XrpcError = String;
 
-type LexObject = HashMap<String, JSONValue>;
-
 pub type JV = JSONValue;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -24,73 +22,11 @@ pub enum StringFormat {
     Cid,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(tag = "type", rename_all = "kebab-case")]
-pub enum Property {
-    String {
-        format: Option<StringFormat>,
-        description: Option<String>,
-        default: Option<String>,
-        min_length: Option<u64>,
-        max_length: Option<u64>,
-        min_graphemes: Option<u64>,
-        max_graphemes: Option<u64>,
-        r#enum: Option<Vec<String>>,
-        r#const: Option<String>,
-        #[serde(rename = "knownValues")]
-        known_values: Option<Vec<String>>,
-    },
-    Ref {
-        description: Option<String>,
-        r#ref: String,
-    },
-    Array {
-        description: Option<String>,
-        items: Box<Property>,
-        min_length: Option<u64>,
-        max_length: Option<u64>,
-    },
-    Integer {
-        description: Option<String>,
-        default: Option<i64>,
-        minimum: Option<i64>,
-        maximum: Option<i64>,
-        r#enum: Option<Vec<i64>>,
-        r#const: Option<i64>,
-    },
-    Boolean {
-        description: Option<String>,
-        default: Option<bool>,
-        r#const: Option<bool>,
-    },
-    Blob {
-        description: Option<String>,
-        accept: Option<Vec<String>>,
-        max_size: Option<u64>,
-    },
-    Union {
-        description: Option<String>,
-        refs: Vec<String>,
-        closed: Option<bool>,
-    },
-    Unknown {
-        description: Option<String>,
-    },
-    CidLink {
-        description: Option<String>,
-    },
-    Bytes {
-        description: Option<String>,
-        min_length: Option<u64>,
-        max_length: Option<u64>,
-    },
-}
-
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub struct Parameters {
     pub required: Option<Vec<String>>,
-    pub properties: Option<HashMap<String, Property>>,
+    pub properties: Option<HashMap<String, UserType>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
@@ -140,7 +76,7 @@ pub enum UserType {
 
     Array {
         description: Option<String>,
-        items: Option</* TODO */ JSONValue>,
+        items: Box<UserType>,
         min_length: Option<u64>,
         max_length: Option<u64>,
     },
@@ -151,9 +87,13 @@ pub enum UserType {
         description: Option<String>,
         required: Option<Vec<String>>,
         nullable: Option<Vec<String>>,
-        properties: Option<HashMap<String, Property>>,
+        properties: Option<HashMap<String, UserType>>,
     },
-
+    Union {
+        description: Option<String>,
+        refs: Vec<String>,
+        closed: Option<bool>,
+    },
     Boolean {
         description: Option<String>,
         default: Option<bool>,
@@ -173,6 +113,7 @@ pub enum UserType {
     },
     #[serde(rename_all = "camelCase")]
     String {
+        format: Option<StringFormat>,
         description: Option<String>,
         default: Option<String>,
         min_length: Option<u64>,
@@ -199,15 +140,12 @@ pub enum UserType {
 // https://atproto.com/specs/lexicon#interface
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LexiconDoc {
-    // Is u8 enough?
     pub lexicon: u8,
-    // Is String the best type?
     pub id: String,
 
     pub revision: Option<u8>,
     pub description: Option<String>,
 
-    //r#type: LexiconType,
     pub defs: HashMap<String, UserType>,
 }
 
@@ -218,29 +156,3 @@ impl FromStr for LexiconDoc {
         serde_json::from_str(s)
     }
 }
-
-/*#[cfg(test)]
-mod test {
-    use std::fs::File;
-    use walkdir::WalkDir;
-
-    use crate::lexicon::LexiconDoc;
-
-    #[test]
-    fn test() {
-        let lexicons_dir_walk = WalkDir::new("/home/matrix89/dev/atproto/lexicons");
-        for file in lexicons_dir_walk {
-            let file = file.unwrap();
-            if file.file_type().is_dir() {
-                continue;
-            }
-
-            println!(">>> {:?}", file.path());
-            let file = File::open(file.path()).unwrap();
-            let lexicon: LexiconDoc = serde_json::from_reader(file).unwrap();
-            println!("{:#?}", lexicon);
-        }
-
-        assert!(false)
-    }
-}*/

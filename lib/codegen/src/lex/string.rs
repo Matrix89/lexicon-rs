@@ -72,6 +72,7 @@ pub fn gen_string(
                 .collect::<Vec<_>>();
 
             quote! {
+               #[derive(Debug, Serialize, Deserialize)]
                pub enum #name {
                    #(#values),*
                }

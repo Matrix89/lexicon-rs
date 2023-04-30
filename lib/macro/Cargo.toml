@@ -9,3 +9,7 @@ proc-macro = true
 [dependencies]
 quote = "1.0.26"
 proc-macro2 = "1.0.56"
+codegen = { path = "../codegen" }
+nsid = { path = "../nsid" }
+lexicon = { path = "../lexicon" }
+walkdir = "2.3.3"

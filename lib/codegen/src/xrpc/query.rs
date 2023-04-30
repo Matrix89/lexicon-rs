@@ -15,8 +15,8 @@ fn gen_body(
     output: &TokenStream,
 ) -> TokenStream {
     let url = format!(
-        "http://localhost:8080/xrpc{}",
-        namespace.replace("::", "/").replace("/lexicon", ""),
+        "http://bsky.social/xrpc{}",
+        namespace.replace("::", ".").replace("/lexicon", ""),
     );
     quote! {
         let client = reqwest::blocking::Client::new();

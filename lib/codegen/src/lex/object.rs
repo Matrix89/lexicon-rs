@@ -1,5 +1,5 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::Property;
+use lexicon::lexicon::UserType;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::HashMap;
@@ -92,6 +92,7 @@ pub fn gen_union(name: &str, refs: Vec<String>) -> (Ident, TokenStream) {
 
     let enum_name = format_ident!("{}Type", name.to_case(Case::Pascal));
     let r#enum = quote! {
+       #[derive(Debug, Serialize, Deserialize)]
        pub enum #enum_name {
            #(#values),*
        }
@@ -106,14 +107,14 @@ impl CodeGen {
         name: &String,
         namespace: &String,
         object_name: &String,
-        property: Property,
+        property: UserType,
         is_required: bool,
         is_nullable: bool,
     ) -> (TokenStream, Option<TokenStream>) {
         let mut doc = DocBuilder::new();
 
         let (name, prop_type, additional_code) = match property {
-            Property::String {
+            UserType::String {
                 description,
                 format,
                 default,
@@ -164,14 +165,14 @@ impl CodeGen {
                     }
                 }
             }
-            Property::Ref { description, r#ref } => {
+            UserType::Ref { description, r#ref } => {
                 doc.add_optional_item("description", description);
 
                 let name = gen_field_name(name);
                 let ref_target = build_ref_target(&r#ref);
                 (name, quote! { #ref_target }, None)
             }
-            Property::Boolean {
+            UserType::Boolean {
                 description,
                 default,
                 r#const,
@@ -183,7 +184,7 @@ impl CodeGen {
                 let name = gen_field_name(name);
                 (name, quote! { bool }, None)
             }
-            Property::Array {
+            UserType::Array {
                 description,
                 items,
                 min_length,
@@ -193,18 +194,18 @@ impl CodeGen {
                 doc.add_optional_item("min_length", min_length);
                 doc.add_optional_item("max_length", max_length);
                 let (array_type, additional_code) = match *items {
-                    Property::Ref { ref r#ref, .. } => {
+                    UserType::Ref { ref r#ref, .. } => {
                         let ref_target = build_ref_target(&r#ref);
                         (quote! { #ref_target }, None)
                     }
-                    Property::String { .. } => (quote! { String }, None),
-                    Property::Integer { .. } => (quote! { i64 }, None),
-                    Property::Union { refs, .. } => {
+                    UserType::String { .. } => (quote! { String }, None),
+                    UserType::Integer { .. } => (quote! { i64 }, None),
+                    UserType::Union { refs, .. } => {
                         let (enum_name, r#enum) = gen_union(name, refs);
                         (quote! { #enum_name }, Some(r#enum))
                     }
-                    Property::Unknown { .. } => (quote! { String }, None),
-                    Property::CidLink { .. } => (quote! { String }, None),
+                    UserType::Unknown { .. } => (quote! { String }, None),
+                    UserType::CidLink { .. } => (quote! { String }, None),
                     v => todo!("{:?}", v),
                 };
                 let name = gen_field_name(name);
@@ -212,7 +213,7 @@ impl CodeGen {
                 let r#type = quote! { Vec<#array_type> };
                 (name, r#type, additional_code)
             }
-            Property::Integer {
+            UserType::Integer {
                 description,
                 default,
                 minimum,
@@ -231,7 +232,7 @@ impl CodeGen {
 
                 (name, quote! { i64 }, None)
             }
-            Property::Blob {
+            UserType::Blob {
                 description,
                 accept,
                 max_size,
@@ -242,7 +243,7 @@ impl CodeGen {
                 let name = format_ident!("{}", name);
                 (name, quote! { String }, None)
             }
-            Property::Union {
+            UserType::Union {
                 description,
                 refs,
                 closed,
@@ -253,19 +254,19 @@ impl CodeGen {
                 let name = format_ident!("{}", name);
                 (name, quote! { #enum_name }, Some(r#enum))
             }
-            Property::Unknown { description } => {
-                doc.add_optional_item("description", description);
+            UserType::Unknown => {
+                //doc.add_optional_item("description", description);
 
                 let name = format_ident!("todo4_{}", name);
                 (name, quote! { String }, None)
             }
-            Property::CidLink { description } => {
+            UserType::CidLink { description } => {
                 doc.add_optional_item("description", description);
 
                 let name = format_ident!("todo3_{}", name);
                 (name, quote! { String }, None)
             }
-            Property::Bytes {
+            UserType::Bytes {
                 description,
                 min_length,
                 max_length,
@@ -277,6 +278,7 @@ impl CodeGen {
                 let name = format_ident!("todo5_{}", name);
                 (name, quote! { String }, None)
             }
+            _ => todo!("{:?}", property),
         };
 
         let prop_type = if is_nullable {
@@ -305,7 +307,7 @@ impl CodeGen {
         description: String,
         required: Vec<String>,
         nullable: Vec<String>,
-        properties: HashMap<String, Property>,
+        properties: HashMap<String, UserType>,
     ) -> TokenStream {
         let mut properties_code = vec![];
         let mut additional_declarations = vec![];
@@ -331,6 +333,7 @@ impl CodeGen {
         quote! {
             #[doc = #description]
             #(#additional_declarations)*
+            #[derive(Debug, Serialize, Deserialize)]
             pub struct #name {
                 #(#properties_code)*
             }

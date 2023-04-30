@@ -80,6 +80,7 @@ impl CodeGen {
             UserType::XrpcProcedure { .. } => quote! {},
             UserType::XrpcSubscription { .. } => quote! {},
             UserType::String {
+                format,
                 description,
                 default,
                 min_length,
@@ -112,11 +113,11 @@ impl CodeGen {
         }
     }
 
-    pub fn gen(self: &CodeGen, node: NSIDNode, namespace: &String) -> TokenStream {
+    pub fn gen_lexicon(self: &CodeGen, node: NSIDNode, namespace: &String) -> TokenStream {
         match node {
             NSIDNode::Segment { name, children } => {
                 let children = children.into_iter().map(|child| {
-                    self.gen(
+                    self.gen_lexicon(
                         child,
                         &format!("{}::{}", namespace, name)
                             .to_owned()
@@ -147,6 +148,23 @@ impl CodeGen {
                     }
                 }
             }
+        }
+    }
+
+    pub fn gen(self: &CodeGen, node: NSIDNode, namespace: &String) -> TokenStream {
+        let lexicon = self.gen_lexicon(node, namespace);
+
+        let xrpc_preamble = xrpc::preamble::gen_preamble();
+        let lexicon_preamble = quote! {
+            extern crate reqwest;
+            extern crate serde;
+            use serde::{Deserialize, Serialize};
+        };
+
+        quote! {
+            #lexicon_preamble
+            #xrpc_preamble
+            #lexicon
         }
     }
 }

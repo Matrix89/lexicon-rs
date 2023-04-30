@@ -424,8 +424,12 @@ dependencies = [
 name = "macro"
 version = "0.1.0"
 dependencies = [
+ "codegen",
+ "lexicon",
+ "nsid",
  "proc-macro2",
  "quote",
+ "walkdir",
 ]
 
 [[package]]
@@ -796,7 +800,10 @@ dependencies = [
 name = "test"
 version = "0.1.0"
 dependencies = [
+ "macro",
  "reqwest",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
