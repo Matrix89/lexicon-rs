@@ -15,14 +15,12 @@ fn gen_body(
     output: &TokenStream,
 ) -> TokenStream {
     let url = format!(
-        "http://bsky.social/xrpc{}",
-        namespace.replace("::", ".").replace("/lexicon", ""),
+        "http://bsky.social/xrpc/{}",
+        namespace.replace("::", ".").replace(".lexicon.", ""),
     );
     quote! {
         let client = reqwest::blocking::Client::new();
-        client.get(#url);
-
-        return None;
+        return client.get(#url).header("Authorization", token).send()?.json::<#output_type>();
     }
 }
 
@@ -80,7 +78,6 @@ impl CodeGen {
         output: Option<Output>,
         errors: Option<Vec</* TODO */ JV>>,
     ) -> TokenStream {
-        println!("Generating query: {} {}", namespace, name);
         let mut doc = DocBuilder::new();
         doc.add_optional_item("Description", description);
 
@@ -95,7 +92,7 @@ impl CodeGen {
         quote! {
             #output
             #doc
-            pub fn #name(#parameters) -> Option<#output_type> {
+            pub fn #name(token: &String, #parameters) -> Result<#output_type, reqwest::Error> {
                 #body
             }
         }

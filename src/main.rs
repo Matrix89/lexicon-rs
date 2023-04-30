@@ -35,15 +35,15 @@ fn main() {
     let src = RustFmt::default().format_str(tokens.to_string()).unwrap();
     //println!("{}", src);
 
-    fs::remove_file("/tmp/lex.rs").unwrap();
-    fs::write("/tmp/lex.rs", src).unwrap();
-    std::process::Command::new("rustc")
-        .stdout(std::process::Stdio::inherit())
-        .arg("--crate-type")
-        .arg("lib")
-        .arg("/tmp/lex.rs")
-        .spawn()
-        .unwrap()
-        .wait()
-        .unwrap();
+    fs::remove_file("lib/test/src/lex.rs").unwrap();
+    fs::write("lib/test/src/lex.rs", src).unwrap();
+    /*std::process::Command::new("rustc")
+    .stdout(std::process::Stdio::inherit())
+    .arg("--crate-type")
+    .arg("lib")
+    .arg("lib/test/src/lex.rs")
+    .spawn()
+    .unwrap()
+    .wait()
+    .unwrap();*/
 }

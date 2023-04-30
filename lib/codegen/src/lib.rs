@@ -124,10 +124,12 @@ impl CodeGen {
                             .replace("/main", ""),
                     )
                 });
-                let name = format_ident!("{}", name.to_case(Case::UpperCamel));
+                let name = format_ident!("{}", name.to_case(Case::Snake));
 
                 quote! {
                     pub mod #name {
+                        #[allow(unused_imports)]
+                        use super::lexicon;
                         #(#children)*
                     }
                 }
@@ -141,9 +143,11 @@ impl CodeGen {
                         def,
                     )
                 });
-                let name = format_ident!("{}", name.to_case(Case::UpperCamel));
+                let name = format_ident!("{}", name.to_case(Case::Snake));
                 quote! {
                     pub mod #name {
+                        #[allow(unused_imports)]
+                        use super::lexicon;
                         #(#defs)*
                     }
                 }
@@ -155,11 +159,7 @@ impl CodeGen {
         let lexicon = self.gen_lexicon(node, namespace);
 
         let xrpc_preamble = xrpc::preamble::gen_preamble();
-        let lexicon_preamble = quote! {
-            extern crate reqwest;
-            extern crate serde;
-            use serde::{Deserialize, Serialize};
-        };
+        let lexicon_preamble = quote! {};
 
         quote! {
             #lexicon_preamble

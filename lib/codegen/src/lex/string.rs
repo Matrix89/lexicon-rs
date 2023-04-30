@@ -4,11 +4,7 @@ use nsid::NSIDNode;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-pub enum KnownValueKind {
-    Namespace { namespace: String, ident: String },
-    Local { ident: String },
-    Literal { value: String },
-}
+use crate::lex::union::KnownValueKind;
 
 pub fn gen_string(
     name: &String,
@@ -72,7 +68,7 @@ pub fn gen_string(
                 .collect::<Vec<_>>();
 
             quote! {
-               #[derive(Debug, Serialize, Deserialize)]
+            #[derive(Clone, Debug, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
                pub enum #name {
                    #(#values),*
                }

@@ -9,6 +9,9 @@ pub fn gen_parameters(parameters: Parameters) -> TokenStream {
     let properties = parameters.properties.unwrap_or_default();
     let required = parameters.required.unwrap_or_default();
 
+    let mut properties = properties.into_iter().collect::<Vec<_>>();
+    properties.sort_by(|a, b| a.0.cmp(&b.0));
+
     properties
         .into_iter()
         .map(|(name, value)| {

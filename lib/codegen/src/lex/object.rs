@@ -4,32 +4,25 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::HashMap;
 
-use crate::{doc_builder::DocBuilder, lex::string::KnownValueKind, CodeGen};
+use crate::{doc_builder::DocBuilder, CodeGen};
 
-use super::string::gen_string;
+use super::{string::gen_string, union::gen_union};
 
 pub fn build_ref_target(r#ref: &str) -> syn::Path {
     let ref_target = if r#ref.starts_with('#') {
-        r#ref.replace('#', "")
-    } else if r#ref.contains('#') {
-        format!(
-            "crate::lexicon::{}",
-            r#ref.replace('.', "::").replace('#', "::")
-        )
+        r#ref.replace('#', "").to_case(Case::Pascal)
     } else {
-        format!("crate::lexicon::{}::main", r#ref.replace('.', "::"))
+        let parts = r#ref.split('#').collect::<Vec<_>>();
+        let ns = parts.first().unwrap();
+        let ns = ns
+            .split('.')
+            .map(|seg| seg.to_case(Case::Snake))
+            .collect::<Vec<_>>()
+            .join("::");
+        let ident = parts.get(1).unwrap_or(&"Main");
+        let ident = ident.to_case(Case::Pascal);
+        format!("lexicon::{}::{}", ns, ident)
     };
-    let ref_target = ref_target
-        .split("::")
-        .map(|segment| {
-            if segment != "crate" {
-                segment.to_case(Case::Pascal)
-            } else {
-                segment.to_owned()
-            }
-        })
-        .collect::<Vec<_>>()
-        .join("::");
     let ref_target: syn::Path = syn::parse_str(ref_target.as_str()).unwrap();
     ref_target
 }
@@ -42,63 +35,6 @@ fn gen_field_name(name: &str) -> Ident {
     };
 
     format_ident!("{}", name)
-}
-
-pub fn gen_union(name: &str, refs: Vec<String>) -> (Ident, TokenStream) {
-    let values = refs
-        .iter()
-        .map(|value| {
-            if value.contains('.') {
-                let parts = value.split('#').collect::<Vec<_>>();
-                let namespace = parts.first().unwrap().to_string();
-                let ident = parts.get(1).unwrap_or(&"Main").to_string();
-                KnownValueKind::Namespace { namespace, ident }
-            } else if value.starts_with('#') {
-                KnownValueKind::Local {
-                    ident: value.replace('#', "").to_string(),
-                }
-            } else {
-                KnownValueKind::Literal {
-                    value: value.to_owned(),
-                }
-            }
-        })
-        .map(|value| match value {
-            KnownValueKind::Local { ident } => {
-                let ident = format_ident!("{}", ident.to_case(Case::Pascal));
-                quote! {
-                    #ident(Box<#ident>)
-                }
-            }
-            KnownValueKind::Literal { value } => {
-                let ident = format_ident!("{}", value.to_case(Case::Pascal));
-                quote! {
-                    #ident
-                }
-            }
-            KnownValueKind::Namespace { namespace, ident } => {
-                let ns_prefix = namespace.split('.').last().unwrap();
-                let ident = format_ident!(
-                    "{}{}",
-                    ns_prefix.to_case(Case::Pascal),
-                    ident.to_case(Case::Pascal)
-                );
-                quote! {
-                    #ident
-                }
-            }
-        })
-        .collect::<Vec<_>>();
-
-    let enum_name = format_ident!("{}Type", name.to_case(Case::Pascal));
-    let r#enum = quote! {
-       #[derive(Debug, Serialize, Deserialize)]
-       pub enum #enum_name {
-           #(#values),*
-       }
-    };
-
-    (enum_name, r#enum)
 }
 
 impl CodeGen {
@@ -228,7 +164,7 @@ impl CodeGen {
                 doc.add_optional_item("enum", r#enum);
                 doc.add_optional_item("const", r#const);
 
-                let name = format_ident!("{}", name);
+                let name = gen_field_name(name);
 
                 (name, quote! { i64 }, None)
             }
@@ -293,7 +229,7 @@ impl CodeGen {
         let doc = doc.build();
 
         let property_code = quote! {
-            #doc
+            //#doc
             pub #name: #prop_type,
         };
 
@@ -331,9 +267,9 @@ impl CodeGen {
         let name = format_ident!("{}", object_name.to_case(Case::Pascal));
 
         quote! {
-            #[doc = #description]
+            //#[doc = #description]
             #(#additional_declarations)*
-            #[derive(Debug, Serialize, Deserialize)]
+            #[derive(Clone, Debug, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
             pub struct #name {
                 #(#properties_code)*
             }
