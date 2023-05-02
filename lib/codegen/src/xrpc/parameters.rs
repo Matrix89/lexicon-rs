@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{Parameters, UserType};
+use lexicon::lexicon::Parameters;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -16,17 +14,16 @@ pub fn gen_parameters(parameters: Parameters) -> TokenStream {
         .into_iter()
         .map(|(name, value)| {
             let name = format_ident!("{}", name.to_case(Case::Snake));
-            match value {
-                UserType::String {
+            /*match value {
+                Primitive::String {
                     description,
                     format,
                     ..
                 } => quote! { #name: String, },
-                UserType::Array { items, .. } => quote! { #name: Vec<String>, },
-                UserType::Integer { .. } => quote! { #name: i64, },
-                UserType::Boolean { .. } => quote! { #name: bool, },
+                Primitive::Integer { .. } => quote! { #name: i64, },
                 v => todo!("{:?}", v),
-            }
+            }*/
+            quote! {}
         })
         .collect()
 }

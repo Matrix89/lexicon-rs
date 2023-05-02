@@ -32,11 +32,16 @@ fn main() {
 
     let tokens = gen.gen(root, &"".to_owned());
     println!("Gen ok");
-    let src = RustFmt::default().format_str(tokens.to_string()).unwrap();
+    let src = RustFmt::default().format_str(tokens.to_string());
+    match src {
+        Ok(src) => {
+            fs::remove_file("lib/test/src/lex.rs").unwrap();
+            fs::write("lib/test/src/lex.rs", src).unwrap();
+        }
+        Err(err) => println!("{}", err),
+    }
     //println!("{}", src);
 
-    fs::remove_file("lib/test/src/lex.rs").unwrap();
-    fs::write("lib/test/src/lex.rs", src).unwrap();
     /*std::process::Command::new("rustc")
     .stdout(std::process::Stdio::inherit())
     .arg("--crate-type")

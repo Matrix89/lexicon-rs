@@ -14,7 +14,7 @@ impl DocBuilder {
         }
     }
 
-    pub fn add_optional_item(&mut self, name: &str, value: Option<impl fmt::Debug>) {
+    pub fn add_optional_item(&mut self, name: &str, value: &Option<impl fmt::Debug>) {
         if let Some(value) = value {
             self.items.insert(name.to_string(), format!("{:?}", value));
         }

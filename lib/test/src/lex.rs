@@ -18,52 +18,52 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct ProfileViewDetailed {
-                        pub did: String,
-                        pub follows_count: i64,
-                        pub posts_count: i64,
-                        pub handle: String,
                         pub indexed_at: String,
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                        pub banner: String,
-                        pub display_name: String,
-                        pub followers_count: i64,
                         pub avatar: String,
-                        pub viewer: ViewerState,
+                        pub banner: String,
+                        pub handle: String,
+                        pub display_name: String,
                         pub description: String,
+                        pub followers_count: i64,
+                        pub viewer: ViewerState,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub did: String,
+                        pub posts_count: i64,
+                        pub follows_count: i64,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct ProfileViewBasic {
-                        pub display_name: String,
-                        pub did: String,
-                        pub viewer: ViewerState,
                         pub handle: String,
-                        pub avatar: String,
                         pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ProfileView {
-                        pub display_name: String,
-                        pub description: String,
                         pub viewer: ViewerState,
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub display_name: String,
                         pub avatar: String,
-                        pub indexed_at: String,
-                        pub handle: String,
                         pub did: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct ViewerState {
-                        pub blocked_by: bool,
+                        pub following: String,
                         pub blocking: String,
                         pub followed_by: String,
-                        pub following: String,
+                        pub blocked_by: bool,
                         pub muted: bool,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ProfileView {
+                        pub description: String,
+                        pub display_name: String,
+                        pub did: String,
+                        pub avatar: String,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub indexed_at: String,
+                        pub viewer: ViewerState,
+                        pub handle: String,
                     }
                 }
                 pub mod get_profile {
@@ -71,7 +71,6 @@ pub mod lexicon {
                     use super::lexicon;
                     pub fn main(
                         token: &String,
-                        actor: String,
                     ) -> Result<lexicon::app::bsky::actor::defs::ProfileViewDetailed, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
@@ -91,10 +90,7 @@ pub mod lexicon {
                     pub struct MainOutput {
                         pub profiles: Vec<lexicon::app::bsky::actor::defs::ProfileViewDetailed>,
                     }
-                    pub fn main(
-                        token: &String,
-                        actors: Vec<String>,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.actor.getProfiles")
@@ -114,11 +110,7 @@ pub mod lexicon {
                         pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Get a list of actors suggested for following. Used in discovery UIs.\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.actor.getSuggestions")
@@ -142,12 +134,7 @@ pub mod lexicon {
                         pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Find actors matching search criteria.\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                        term: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.actor.searchActors")
@@ -166,11 +153,7 @@ pub mod lexicon {
                         pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileViewBasic>,
                     }
                     #[doc = "Description: \"Find actor suggestions for a search term.\""]
-                    pub fn main(
-                        token: &String,
-                        limit: i64,
-                        term: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.actor.searchActorsTypeahead")
@@ -189,8 +172,11 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct View {
-                        pub external: ViewExternal,
+                    pub struct ViewExternal {
+                        pub description: String,
+                        pub thumb: String,
+                        pub uri: String,
+                        pub title: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -201,20 +187,17 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct External {
-                        pub title: String,
-                        pub description: String,
-                        pub thumb: String,
-                        pub uri: String,
+                    pub struct View {
+                        pub external: ViewExternal,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct ViewExternal {
+                    pub struct External {
                         pub uri: String,
-                        pub thumb: String,
-                        pub title: String,
                         pub description: String,
+                        pub title: String,
+                        pub thumb: String,
                     }
                 }
                 pub mod images {
@@ -223,15 +206,16 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct View {
-                        pub images: Vec<ViewImage>,
+                    pub struct ViewImage {
+                        pub fullsize: String,
+                        pub alt: String,
+                        pub thumb: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct Image {
-                        pub image: String,
-                        pub alt: String,
+                    pub struct View {
+                        pub images: Vec<ViewImage>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -242,10 +226,9 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct ViewImage {
-                        pub fullsize: String,
+                    pub struct Image {
                         pub alt: String,
-                        pub thumb: String,
+                        pub image: String,
                     }
                 }
                 pub mod record {
@@ -254,25 +237,7 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct ViewBlocked {
-                        pub uri: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Main {
-                        pub record: lexicon::com::atproto::repo::strong_ref::Main,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ViewNotFound {
-                        pub uri: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ViewrecordType {
+                    pub enum RecordType {
                         ViewRecord(Box<ViewRecord>),
                         ViewNotFound(Box<ViewNotFound>),
                         ViewBlocked(Box<ViewBlocked>),
@@ -281,7 +246,13 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct View {
-                        pub record: ViewrecordType,
+                        pub record: RecordType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewBlocked {
+                        pub uri: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -296,13 +267,25 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct ViewRecord {
-                        pub uri: String,
                         pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
-                        pub todo4_value: String,
-                        pub indexed_at: String,
                         pub embeds: Vec<EmbedsType>,
+                        pub uri: String,
+                        pub indexed_at: String,
                         pub cid: String,
+                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub value: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
+                        pub record: lexicon::com::atproto::repo::strong_ref::Main,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewNotFound {
+                        pub uri: String,
                     }
                 }
                 pub mod record_with_media {
@@ -311,7 +294,7 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum ViewmediaType {
+                    pub enum MediaType {
                         ImagesView,
                         ExternalView,
                     }
@@ -319,13 +302,13 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct View {
-                        pub media: ViewmediaType,
+                        pub media: MediaType,
                         pub record: lexicon::app::bsky::embed::record::View,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum MainmediaType {
+                    pub enum MediaType {
                         ImagesMain,
                         ExternalMain,
                     }
@@ -334,7 +317,7 @@ pub mod lexicon {
                     )]
                     pub struct Main {
                         pub record: lexicon::app::bsky::embed::record::Main,
-                        pub media: MainmediaType,
+                        pub media: MediaType,
                     }
                 }
             }
@@ -347,21 +330,6 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct NotFoundPost {
-                        pub uri: String,
-                        pub not_found: bool,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ThreadViewPostparentType {
-                        ThreadViewPost(Box<ThreadViewPost>),
-                        NotFoundPost(Box<NotFoundPost>),
-                        BlockedPost(Box<BlockedPost>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
                     pub enum RepliesType {
                         ThreadViewPost(Box<ThreadViewPost>),
                         NotFoundPost(Box<NotFoundPost>),
@@ -370,10 +338,78 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    pub enum ParentType {
+                        ThreadViewPost(Box<ThreadViewPost>),
+                        NotFoundPost(Box<NotFoundPost>),
+                        BlockedPost(Box<BlockedPost>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ThreadViewPost {
-                        pub post: PostView,
-                        pub parent: ThreadViewPostparentType,
                         pub replies: Vec<RepliesType>,
+                        pub post: PostView,
+                        pub parent: ParentType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum ReasonType {
+                        ReasonRepost(Box<ReasonRepost>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct FeedViewPost {
+                        pub post: lexicon::app::bsky::feed::defs::PostView,
+                        pub reason: ReasonType,
+                        pub reply: ReplyRef,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewerState {
+                        pub repost: String,
+                        pub like: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum EmbedType {
+                        ImagesView,
+                        ExternalView,
+                        RecordView,
+                        RecordWithMediaView,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct PostView {
+                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub record: String,
+                        pub like_count: i64,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub reply_count: i64,
+                        pub uri: String,
+                        pub repost_count: i64,
+                        pub embed: EmbedType,
+                        pub indexed_at: String,
+                        pub cid: String,
+                        pub viewer: ViewerState,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReasonRepost {
+                        pub by: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub indexed_at: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct NotFoundPost {
+                        pub uri: String,
+                        pub not_found: bool,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -389,59 +425,6 @@ pub mod lexicon {
                         pub uri: String,
                         pub blocked: bool,
                     }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum PostViewembedType {
-                        ImagesView,
-                        ExternalView,
-                        RecordView,
-                        RecordWithMediaView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct PostView {
-                        pub embed: PostViewembedType,
-                        pub repost_count: i64,
-                        pub uri: String,
-                        pub cid: String,
-                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
-                        pub todo4_record: String,
-                        pub like_count: i64,
-                        pub indexed_at: String,
-                        pub reply_count: i64,
-                        pub viewer: ViewerState,
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ViewerState {
-                        pub repost: String,
-                        pub like: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum FeedViewPostreasonType {
-                        ReasonRepost(Box<ReasonRepost>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct FeedViewPost {
-                        pub reply: ReplyRef,
-                        pub reason: FeedViewPostreasonType,
-                        pub post: lexicon::app::bsky::feed::defs::PostView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ReasonRepost {
-                        pub indexed_at: String,
-                        pub by: lexicon::app::bsky::actor::defs::ProfileViewBasic,
-                    }
                 }
                 pub mod get_author_feed {
                     #[allow(unused_imports)]
@@ -450,16 +433,11 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                         pub cursor: String,
+                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                     }
                     #[doc = "Description: \"A view of an actor's feed.\""]
-                    pub fn main(
-                        token: &String,
-                        actor: String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.feed.getAuthorFeed")
@@ -474,33 +452,27 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
-                        pub likes: Vec<Like>,
-                        pub cid: String,
-                        pub uri: String,
-                        pub cursor: String,
+                    pub struct Like {
+                        pub indexed_at: String,
+                        pub created_at: String,
+                        pub actor: lexicon::app::bsky::actor::defs::ProfileView,
                     }
-                    pub fn main(
-                        token: &String,
-                        cid: String,
-                        cursor: String,
-                        limit: i64,
-                        uri: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct MainOutput {
+                        pub cursor: String,
+                        pub uri: String,
+                        pub cid: String,
+                        pub likes: Vec<Like>,
+                    }
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.feed.getLikes")
                             .header("Authorization", token)
                             .send()?
                             .json::<MainOutput>();
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Like {
-                        pub actor: lexicon::app::bsky::actor::defs::ProfileView,
-                        pub indexed_at: String,
-                        pub created_at: String,
                     }
                 }
                 pub mod get_post_thread {
@@ -509,7 +481,7 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum MainOutputthreadType {
+                    pub enum ThreadType {
                         DefsThreadViewPost,
                         DefsNotFoundPost,
                         DefsBlockedPost,
@@ -518,13 +490,9 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub thread: MainOutputthreadType,
+                        pub thread: ThreadType,
                     }
-                    pub fn main(
-                        token: &String,
-                        depth: i64,
-                        uri: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.feed.getPostThread")
@@ -543,10 +511,7 @@ pub mod lexicon {
                         pub posts: Vec<lexicon::app::bsky::feed::defs::PostView>,
                     }
                     #[doc = "Description: \"A view of an actor's feed.\""]
-                    pub fn main(
-                        token: &String,
-                        uris: Vec<String>,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.feed.getPosts")
@@ -562,18 +527,12 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub reposted_by: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub cid: String,
                         pub cursor: String,
                         pub uri: String,
+                        pub reposted_by: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
-                    pub fn main(
-                        token: &String,
-                        cid: String,
-                        cursor: String,
-                        limit: i64,
-                        uri: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.feed.getRepostedBy")
@@ -593,20 +552,13 @@ pub mod lexicon {
                         pub cursor: String,
                     }
                     #[doc = "Description: \"A view of the user's home timeline.\""]
-                    pub fn main(
-                        token: &String,
-                        algorithm: String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        let resp= client
+                        return client
                             .get("http://bsky.social/xrpc/app.bsky.feed.getTimeline")
-                            .header("accept", "application/json")
                             .header("Authorization", token)
-                            .send()?;
-                        println!("res {:?}", resp.text()?);
-                        panic!();
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
                 pub mod like {
@@ -620,9 +572,9 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Entity {
+                        pub r#type: String,
                         pub index: TextSlice,
                         pub value: String,
-                        pub r#type: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -635,8 +587,8 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct TextSlice {
-                        pub start: i64,
                         pub end: i64,
+                        pub start: i64,
                     }
                 }
                 pub mod repost {
@@ -666,11 +618,7 @@ pub mod lexicon {
                         pub blocks: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who is the requester's account blocking?\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.graph.getBlocks")
@@ -691,12 +639,7 @@ pub mod lexicon {
                         pub cursor: String,
                     }
                     #[doc = "Description: \"Who is following an actor?\""]
-                    pub fn main(
-                        token: &String,
-                        actor: String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.graph.getFollowers")
@@ -712,17 +655,12 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
+                        pub follows: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub cursor: String,
                         pub subject: lexicon::app::bsky::actor::defs::ProfileView,
-                        pub follows: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who is an actor following?\""]
-                    pub fn main(
-                        token: &String,
-                        actor: String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.graph.getFollows")
@@ -742,11 +680,7 @@ pub mod lexicon {
                         pub mutes: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who does the viewer mute?\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.graph.getMutes")
@@ -759,20 +693,26 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Mute an actor by did or handle.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/app/bsky/graph/muteActor");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/app.bsky.graph.muteActor")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod unmute_actor {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Unmute an actor by did or handle.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/app/bsky/graph/unmuteActor");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/app.bsky.graph.unmuteActor")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
@@ -788,10 +728,7 @@ pub mod lexicon {
                     pub struct MainOutput {
                         pub count: i64,
                     }
-                    pub fn main(
-                        token: &String,
-                        seen_at: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.notification.getUnreadCount")
@@ -806,41 +743,11 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum Reason {
-                        Like,
-                        Repost,
-                        Follow,
-                        Mention,
-                        Reply,
-                        Quote,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Notification {
-                        pub todo4_record: String,
-                        pub reason: String,
-                        pub reason_subject: String,
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                        pub cid: String,
-                        pub uri: String,
-                        pub is_read: bool,
-                        pub author: lexicon::app::bsky::actor::defs::ProfileView,
-                        pub indexed_at: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
                     pub struct MainOutput {
                         pub cursor: String,
                         pub notifications: Vec<Notification>,
                     }
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                        seen_at: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.notification.listNotifications")
@@ -848,15 +755,32 @@ pub mod lexicon {
                             .send()?
                             .json::<MainOutput>();
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Notification {
+                        pub author: lexicon::app::bsky::actor::defs::ProfileView,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub reason: String,
+                        pub reason_subject: String,
+                        pub record: String,
+                        pub cid: String,
+                        pub is_read: bool,
+                        pub indexed_at: String,
+                        pub uri: String,
+                    }
                 }
                 pub mod update_seen {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Notify server that the user has seen notifications.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/app/bsky/notification/updateSeen");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/app.bsky.notification.updateSeen")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
@@ -869,6 +793,25 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    pub struct Link {
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Mention {
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ByteSlice {
+                        pub byte_start: i64,
+                        pub byte_end: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub enum FeaturesType {
                         Mention(Box<Mention>),
                         Link(Box<Link>),
@@ -877,27 +820,8 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Main {
-                        pub index: ByteSlice,
                         pub features: Vec<FeaturesType>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Link {
-                        pub uri: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ByteSlice {
-                        pub byte_end: i64,
-                        pub byte_start: i64,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Mention {
-                        pub did: String,
+                        pub index: ByteSlice,
                     }
                 }
             }
@@ -911,15 +835,11 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                         pub cursor: String,
+                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                     }
                     #[doc = "Description: \"An unspecced view of globally popular items\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/app.bsky.unspecced.getPopular")
@@ -946,147 +866,48 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum ActionType {
-                        Takedown,
-                        Flag,
-                        Acknowledge,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ReportViewsubjectType {
-                        RepoRef(Box<RepoRef>),
-                        StrongRefMain,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ReportView {
-                        pub id: i64,
-                        pub created_at: String,
-                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
-                        pub subject: ReportViewsubjectType,
-                        pub reported_by: String,
-                        pub reason: String,
-                        pub resolved_by_action_ids: Vec<i64>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
                     pub struct ActionReversal {
+                        pub created_by: String,
                         pub created_at: String,
                         pub reason: String,
-                        pub created_by: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct RecordViewDetail {
-                        pub todo4_value: String,
-                        pub cid: String,
-                        pub blobs: Vec<BlobView>,
-                        pub repo: RepoView,
-                        pub indexed_at: String,
-                        pub uri: String,
-                        pub moderation: ModerationDetail,
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Moderation {
-                        pub current_action: ActionViewCurrent,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum BlobViewdetailsType {
-                        ImageDetails(Box<ImageDetails>),
-                        VideoDetails(Box<VideoDetails>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct BlobView {
-                        pub cid: String,
-                        pub size: i64,
-                        pub moderation: Moderation,
-                        pub details: BlobViewdetailsType,
-                        pub created_at: String,
-                        pub mime_type: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct VideoDetails {
-                        pub length: i64,
-                        pub height: i64,
                         pub width: i64,
+                        pub height: i64,
+                        pub length: i64,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum ActionViewsubjectType {
-                        RepoRef(Box<RepoRef>),
-                        StrongRefMain,
+                    pub struct RepoRef {
+                        pub did: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct ActionView {
-                        pub negate_label_vals: Vec<String>,
-                        pub created_by: String,
-                        pub action: ActionType,
-                        pub created_at: String,
-                        pub resolved_report_ids: Vec<i64>,
-                        pub reason: String,
-                        pub reversal: ActionReversal,
-                        pub id: i64,
-                        pub subject: ActionViewsubjectType,
-                        pub subject_blob_cids: Vec<String>,
-                        pub create_label_vals: Vec<String>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ActionViewDetailsubjectType {
-                        RepoView(Box<RepoView>),
-                        RecordView(Box<RecordView>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ActionViewDetail {
-                        pub action: ActionType,
-                        pub created_at: String,
-                        pub resolved_reports: Vec<ReportView>,
-                        pub id: i64,
-                        pub subject: ActionViewDetailsubjectType,
-                        pub create_label_vals: Vec<String>,
-                        pub reason: String,
-                        pub reversal: ActionReversal,
-                        pub created_by: String,
-                        pub negate_label_vals: Vec<String>,
-                        pub subject_blobs: Vec<BlobView>,
+                    pub struct RecordView {
+                        pub repo: RepoView,
+                        pub value: String,
+                        pub blob_cids: Vec<String>,
+                        pub indexed_at: String,
+                        pub cid: String,
+                        pub moderation: Moderation,
+                        pub uri: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct RepoView {
-                        pub did: String,
                         pub related_records: Vec<String>,
-                        pub handle: String,
-                        pub moderation: Moderation,
-                        pub invited_by: lexicon::com::atproto::server::defs::InviteCode,
-                        pub email: String,
                         pub indexed_at: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct ImageDetails {
-                        pub width: i64,
-                        pub height: i64,
+                        pub moderation: Moderation,
+                        pub email: String,
+                        pub invited_by: lexicon::com::atproto::server::defs::InviteCode,
+                        pub handle: String,
+                        pub did: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -1098,33 +919,138 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    pub struct ImageDetails {
+                        pub width: i64,
+                        pub height: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ModerationDetail {
-                        pub reports: Vec<ReportView>,
                         pub current_action: ActionViewCurrent,
+                        pub reports: Vec<ReportView>,
                         pub actions: Vec<ActionView>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct RecordView {
-                        pub cid: String,
-                        pub blob_cids: Vec<String>,
-                        pub repo: RepoView,
-                        pub todo4_value: String,
-                        pub indexed_at: String,
-                        pub moderation: Moderation,
-                        pub uri: String,
+                    pub enum SubjectType {
+                        RepoView(Box<RepoView>),
+                        RecordView(Box<RecordView>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct RepoRef {
+                    pub struct ActionViewDetail {
+                        pub reason: String,
+                        pub created_at: String,
+                        pub subject: SubjectType,
+                        pub create_label_vals: Vec<String>,
+                        pub resolved_reports: Vec<ReportView>,
+                        pub created_by: String,
+                        pub action: ActionType,
+                        pub id: i64,
+                        pub reversal: ActionReversal,
+                        pub subject_blobs: Vec<BlobView>,
+                        pub negate_label_vals: Vec<String>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RecordViewDetail {
+                        pub blobs: Vec<BlobView>,
+                        pub value: String,
+                        pub uri: String,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub cid: String,
+                        pub indexed_at: String,
+                        pub repo: RepoView,
+                        pub moderation: ModerationDetail,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Moderation {
+                        pub current_action: ActionViewCurrent,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum DetailsType {
+                        ImageDetails(Box<ImageDetails>),
+                        VideoDetails(Box<VideoDetails>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct BlobView {
+                        pub cid: String,
+                        pub details: DetailsType,
+                        pub size: i64,
+                        pub mime_type: String,
+                        pub moderation: Moderation,
+                        pub created_at: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RepoViewDetail {
+                        pub email: String,
+                        pub moderation: ModerationDetail,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub invited_by: lexicon::com::atproto::server::defs::InviteCode,
+                        pub invites: Vec<lexicon::com::atproto::server::defs::InviteCode>,
+                        pub related_records: Vec<String>,
+                        pub handle: String,
+                        pub indexed_at: String,
                         pub did: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum ReportViewDetailsubjectType {
+                    pub enum SubjectType {
+                        RepoRef(Box<RepoRef>),
+                        StrongRefMain,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReportView {
+                        pub subject: SubjectType,
+                        pub reported_by: String,
+                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
+                        pub reason: String,
+                        pub id: i64,
+                        pub created_at: String,
+                        pub resolved_by_action_ids: Vec<i64>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
+                        RepoRef(Box<RepoRef>),
+                        StrongRefMain,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ActionView {
+                        pub create_label_vals: Vec<String>,
+                        pub negate_label_vals: Vec<String>,
+                        pub reversal: ActionReversal,
+                        pub resolved_report_ids: Vec<i64>,
+                        pub reason: String,
+                        pub created_at: String,
+                        pub created_by: String,
+                        pub action: ActionType,
+                        pub id: i64,
+                        pub subject_blob_cids: Vec<String>,
+                        pub subject: SubjectType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
                         RepoView(Box<RepoView>),
                         RecordView(Box<RecordView>),
                     }
@@ -1132,40 +1058,27 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct ReportViewDetail {
-                        pub subject: ReportViewDetailsubjectType,
-                        pub created_at: String,
-                        pub reported_by: String,
                         pub resolved_by_actions:
                             Vec<lexicon::com::atproto::admin::defs::ActionView>,
-                        pub reason: String,
-                        pub id: i64,
+                        pub created_at: String,
                         pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct RepoViewDetail {
-                        pub email: String,
-                        pub handle: String,
-                        pub invites: Vec<lexicon::com::atproto::server::defs::InviteCode>,
-                        pub moderation: ModerationDetail,
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
-                        pub invited_by: lexicon::com::atproto::server::defs::InviteCode,
-                        pub did: String,
-                        pub related_records: Vec<String>,
-                        pub indexed_at: String,
+                        pub id: i64,
+                        pub subject: SubjectType,
+                        pub reason: String,
+                        pub reported_by: String,
                     }
                 }
                 pub mod disable_invite_codes {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Disable some set of codes and/or all codes associated with a set of users\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/disableInviteCodes",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.disableInviteCodes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod get_invite_codes {
@@ -1175,16 +1088,11 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub cursor: String,
                         pub codes: Vec<lexicon::com::atproto::server::defs::InviteCode>,
+                        pub cursor: String,
                     }
                     #[doc = "Description: \"Admin view of invite codes\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                        sort: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.admin.getInviteCodes")
@@ -1199,7 +1107,6 @@ pub mod lexicon {
                     #[doc = "Description: \"View details about a moderation action.\""]
                     pub fn main(
                         token: &String,
-                        id: i64,
                     ) -> Result<lexicon::com::atproto::admin::defs::ActionViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
@@ -1217,16 +1124,11 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub cursor: String,
                         pub actions: Vec<lexicon::com::atproto::admin::defs::ActionView>,
+                        pub cursor: String,
                     }
                     #[doc = "Description: \"List moderation actions related to a subject.\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                        subject: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.admin.getModerationActions")
@@ -1241,7 +1143,6 @@ pub mod lexicon {
                     #[doc = "Description: \"View details about a moderation report.\""]
                     pub fn main(
                         token: &String,
-                        id: i64,
                     ) -> Result<lexicon::com::atproto::admin::defs::ReportViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
@@ -1259,17 +1160,11 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub cursor: String,
                         pub reports: Vec<lexicon::com::atproto::admin::defs::ReportView>,
+                        pub cursor: String,
                     }
                     #[doc = "Description: \"List moderation reports related to a subject.\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                        resolved: bool,
-                        subject: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.admin.getModerationReports")
@@ -1284,8 +1179,6 @@ pub mod lexicon {
                     #[doc = "Description: \"View details about a record.\""]
                     pub fn main(
                         token: &String,
-                        cid: String,
-                        uri: String,
                     ) -> Result<lexicon::com::atproto::admin::defs::RecordViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
@@ -1302,7 +1195,6 @@ pub mod lexicon {
                     #[doc = "Description: \"View details about a repository.\""]
                     pub fn main(
                         token: &String,
-                        did: String,
                     ) -> Result<lexicon::com::atproto::admin::defs::RepoViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
@@ -1317,24 +1209,30 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Resolve moderation reports by an action.\""]
-                    pub fn main() -> Option<lexicon::com::atproto::admin::defs::ActionView> {
+                    pub fn main(
+                        token: &String,
+                    ) -> Option<lexicon::com::atproto::admin::defs::ActionView>
+                    {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/resolveModerationReports",
-                        );
-                        return None;
+                        return client . post ("http://bsky.social/xrpc/com.atproto.admin.resolveModerationReports") . header ("Authorization" , token) . send () ? . json :: < lexicon :: com :: atproto :: admin :: defs :: ActionView > () ;
                     }
                 }
                 pub mod reverse_moderation_action {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Reverse a moderation action.\""]
-                    pub fn main() -> Option<lexicon::com::atproto::admin::defs::ActionView> {
+                    pub fn main(
+                        token: &String,
+                    ) -> Option<lexicon::com::atproto::admin::defs::ActionView>
+                    {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/reverseModerationAction",
-                        );
-                        return None;
+                        return client
+                            .post(
+                                "http://bsky.social/xrpc/com.atproto.admin.reverseModerationAction",
+                            )
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::ActionView>();
                     }
                 }
                 pub mod search_repos {
@@ -1348,13 +1246,7 @@ pub mod lexicon {
                         pub cursor: String,
                     }
                     #[doc = "Description: \"Find repositories based on a search term.\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        invited_by: String,
-                        limit: i64,
-                        term: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.admin.searchRepos")
@@ -1367,36 +1259,42 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Take a moderation action on a repo.\""]
-                    pub fn main() -> Option<lexicon::com::atproto::admin::defs::ActionView> {
+                    pub fn main(
+                        token: &String,
+                    ) -> Option<lexicon::com::atproto::admin::defs::ActionView>
+                    {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/takeModerationAction",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.takeModerationAction")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::ActionView>();
                     }
                 }
                 pub mod update_account_email {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Administrative action to update an account's email\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/updateAccountEmail",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.updateAccountEmail")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod update_account_handle {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Administrative action to update an account's handle\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/updateAccountHandle",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.updateAccountHandle")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
@@ -1413,10 +1311,7 @@ pub mod lexicon {
                         pub did: String,
                     }
                     #[doc = "Description: \"Provides the DID of a repo.\""]
-                    pub fn main(
-                        token: &String,
-                        handle: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.identity.resolveHandle")
@@ -1429,10 +1324,13 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Updates the handle of the account\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/identity/updateHandle");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.identity.updateHandle")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
@@ -1446,11 +1344,11 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Label {
-                        pub cts: String,
                         pub src: String,
-                        pub uri: String,
                         pub cid: String,
+                        pub cts: String,
                         pub val: String,
+                        pub uri: String,
                         pub neg: bool,
                     }
                 }
@@ -1465,13 +1363,7 @@ pub mod lexicon {
                         pub cursor: String,
                     }
                     #[doc = "Description: \"Find labels relevant to the provided URI patterns.\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                        sources: Vec<String>,
-                        uri_patterns: Vec<String>,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.label.queryLabels")
@@ -1486,15 +1378,9 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum Name {
-                        OutdatedCursor,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
                     pub struct Info {
-                        pub name: String,
                         pub message: String,
+                        pub name: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -1514,43 +1400,34 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum MainOutputsubjectType {
+                    pub enum SubjectType {
                         DefsRepoRef,
                         StrongRefMain,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
+                    pub struct Main {
                         pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
-                        pub created_at: String,
-                        pub id: i64,
-                        pub reported_by: String,
                         pub reason: String,
-                        pub subject: MainOutputsubjectType,
+                        pub id: i64,
+                        pub created_at: String,
+                        pub subject: SubjectType,
+                        pub reported_by: String,
                     }
                     #[doc = "Description: \"Report a repo or a record.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .post("http://localhost:8080/xrpc/com/atproto/moderation/createReport");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.moderation.createReport")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod defs {
                     #[allow(unused_imports)]
                     use super::lexicon;
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ReasonType {
-                        ReasonSpam,
-                        ReasonViolation,
-                        ReasonMisleading,
-                        ReasonSexual,
-                        ReasonRude,
-                        ReasonOther,
-                    }
                 }
             }
             pub mod repo {
@@ -1562,30 +1439,33 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    pub struct Create {
+                        pub rkey: String,
+                        pub value: String,
+                        pub collection: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Delete {
                         pub collection: String,
                         pub rkey: String,
+                    }
+                    #[doc = "Description: \"Apply a batch transaction of creates, updates, and deletes.\""]
+                    pub fn main(token: &String) -> Option<()> {
+                        let client = reqwest::blocking::Client::new();
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.applyWrites")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Update {
-                        pub collection: String,
                         pub rkey: String,
-                        pub todo4_value: String,
-                    }
-                    #[doc = "Description: \"Apply a batch transaction of creates, updates, and deletes.\""]
-                    pub fn main() -> Option<()> {
-                        let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/applyWrites");
-                        return None;
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Create {
-                        pub todo4_value: String,
-                        pub rkey: String,
+                        pub value: String,
                         pub collection: String,
                     }
                 }
@@ -1595,25 +1475,31 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
+                    pub struct Main {
                         pub uri: String,
                         pub cid: String,
                     }
                     #[doc = "Description: \"Create a new record.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/createRecord");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.createRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod delete_record {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Delete a record, or ensure it doesn't exist.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/deleteRecord");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.deleteRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod describe_repo {
@@ -1624,16 +1510,13 @@ pub mod lexicon {
                     )]
                     pub struct MainOutput {
                         pub handle: String,
-                        pub todo4_didDoc: String,
                         pub collections: Vec<String>,
                         pub did: String,
                         pub handle_is_correct: bool,
+                        pub didDoc: String,
                     }
                     #[doc = "Description: \"Get information about the repo, including the list of collections.\""]
-                    pub fn main(
-                        token: &String,
-                        repo: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.repo.describeRepo")
@@ -1649,18 +1532,12 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub uri: String,
                         pub cid: String,
-                        pub todo4_value: String,
+                        pub uri: String,
+                        pub value: String,
                     }
                     #[doc = "Description: \"Get a record.\""]
-                    pub fn main(
-                        token: &String,
-                        cid: String,
-                        collection: String,
-                        repo: String,
-                        rkey: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.repo.getRecord")
@@ -1675,35 +1552,26 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    pub struct Record {
+                        pub cid: String,
+                        pub value: String,
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        pub cursor: String,
                         pub records: Vec<Record>,
+                        pub cursor: String,
                     }
                     #[doc = "Description: \"List a range of records in a collection.\""]
-                    pub fn main(
-                        token: &String,
-                        collection: String,
-                        cursor: String,
-                        limit: i64,
-                        repo: String,
-                        reverse: bool,
-                        rkey_end: String,
-                        rkey_start: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.repo.listRecords")
                             .header("Authorization", token)
                             .send()?
                             .json::<MainOutput>();
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Record {
-                        pub uri: String,
-                        pub cid: String,
-                        pub todo4_value: String,
                     }
                 }
                 pub mod put_record {
@@ -1712,15 +1580,18 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
+                    pub struct Main {
                         pub cid: String,
                         pub uri: String,
                     }
                     #[doc = "Description: \"Write a record, creating or updating it as needed.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/putRecord");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.putRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod strong_ref {
@@ -1740,14 +1611,17 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
+                    pub struct Main {
                         pub blob: String,
                     }
                     #[doc = "Description: \"Upload a new blob to be added to repo in a later request.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/uploadBlob");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.uploadBlob")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
             }
@@ -1760,17 +1634,20 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
-                        pub access_jwt: String,
+                    pub struct Main {
                         pub refresh_jwt: String,
-                        pub handle: String,
                         pub did: String,
+                        pub access_jwt: String,
+                        pub handle: String,
                     }
                     #[doc = "Description: \"Create an account.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/createAccount");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createAccount")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod create_app_password {
@@ -1780,17 +1657,18 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct AppPassword {
-                        pub password: String,
                         pub created_at: String,
+                        pub password: String,
                         pub name: String,
                     }
                     #[doc = "Description: \"Create an app-specific password.\""]
-                    pub fn main() -> Option<AppPassword> {
+                    pub fn main(token: &String) -> Option<AppPassword> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/createAppPassword",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createAppPassword")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<AppPassword>();
                     }
                 }
                 pub mod create_invite_code {
@@ -1799,15 +1677,17 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
+                    pub struct Main {
                         pub code: String,
                     }
                     #[doc = "Description: \"Create an invite code.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .post("http://localhost:8080/xrpc/com/atproto/server/createInviteCode");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createInviteCode")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod create_invite_codes {
@@ -1816,23 +1696,24 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct AccountCodes {
-                        pub account: String,
-                        pub codes: Vec<String>,
+                    pub struct Main {
+                        pub codes: Vec<AccountCodes>,
+                    }
+                    #[doc = "Description: \"Create an invite code.\""]
+                    pub fn main(token: &String) -> Option<main> {
+                        let client = reqwest::blocking::Client::new();
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createInviteCodes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
-                        pub codes: Vec<AccountCodes>,
-                    }
-                    #[doc = "Description: \"Create an invite code.\""]
-                    pub fn main() -> Option<MainOutput> {
-                        let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/createInviteCodes",
-                        );
-                        return None;
+                    pub struct AccountCodes {
+                        pub account: String,
+                        pub codes: Vec<String>,
                     }
                 }
                 pub mod create_session {
@@ -1841,18 +1722,21 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
-                        pub access_jwt: String,
-                        pub handle: String,
+                    pub struct Main {
                         pub email: String,
+                        pub access_jwt: String,
                         pub refresh_jwt: String,
+                        pub handle: String,
                         pub did: String,
                     }
                     #[doc = "Description: \"Create an authentication session.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/createSession");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod defs {
@@ -1861,53 +1745,52 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct InviteCode {
-                        pub uses: Vec<InviteCodeUse>,
-                        pub disabled: bool,
-                        pub code: String,
-                        pub created_at: String,
-                        pub available: i64,
-                        pub for_account: String,
-                        pub created_by: String,
+                    pub struct InviteCodeUse {
+                        pub used_by: String,
+                        pub used_at: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct InviteCodeUse {
-                        pub used_by: String,
-                        pub used_at: String,
+                    pub struct InviteCode {
+                        pub for_account: String,
+                        pub disabled: bool,
+                        pub code: String,
+                        pub created_by: String,
+                        pub available: i64,
+                        pub uses: Vec<InviteCodeUse>,
+                        pub created_at: String,
                     }
                 }
                 pub mod delete_account {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Delete a user account with a token and password.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/deleteAccount");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.deleteAccount")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod delete_session {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Delete the current session.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/deleteSession");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.deleteSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod describe_server {
                     #[allow(unused_imports)]
                     use super::lexicon;
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Links {
-                        pub privacy_policy: String,
-                        pub terms_of_service: String,
-                    }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
@@ -1925,6 +1808,13 @@ pub mod lexicon {
                             .send()?
                             .json::<MainOutput>();
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Links {
+                        pub privacy_policy: String,
+                        pub terms_of_service: String,
+                    }
                 }
                 pub mod get_account_invite_codes {
                     #[allow(unused_imports)]
@@ -1936,11 +1826,7 @@ pub mod lexicon {
                         pub codes: Vec<lexicon::com::atproto::server::defs::InviteCode>,
                     }
                     #[doc = "Description: \"Get all invite codes for a given account\""]
-                    pub fn main(
-                        token: &String,
-                        create_available: bool,
-                        include_used: bool,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.server.getAccountInviteCodes")
@@ -1956,9 +1842,9 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct MainOutput {
-                        pub did: String,
                         pub handle: String,
                         pub email: String,
+                        pub did: String,
                     }
                     #[doc = "Description: \"Get information about the current session.\""]
                     pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
@@ -1976,13 +1862,6 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct AppPassword {
-                        pub created_at: String,
-                        pub name: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
                     pub struct MainOutput {
                         pub passwords: Vec<AppPassword>,
                     }
@@ -1995,6 +1874,13 @@ pub mod lexicon {
                             .send()?
                             .json::<MainOutput>();
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct AppPassword {
+                        pub name: String,
+                        pub created_at: String,
+                    }
                 }
                 pub mod refresh_session {
                     #[allow(unused_imports)]
@@ -2002,63 +1888,72 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct MainOutput {
+                    pub struct Main {
                         pub access_jwt: String,
                         pub handle: String,
-                        pub did: String,
                         pub refresh_jwt: String,
+                        pub did: String,
                     }
                     #[doc = "Description: \"Refresh an authentication session.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/refreshSession");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.refreshSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
                 pub mod request_account_delete {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Initiate a user account deletion via email.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/requestAccountDelete",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.requestAccountDelete")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod request_password_reset {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Initiate a user account password reset via email.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/requestPasswordReset",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.requestPasswordReset")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod reset_password {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Reset a user account password using a token.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/resetPassword");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.resetPassword")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
                 pub mod revoke_app_password {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Revoke an app-specific password by name.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/revokeAppPassword",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.revokeAppPassword")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
@@ -2069,11 +1964,7 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Get a blob associated with a given repo.\""]
-                    pub fn main(
-                        token: &String,
-                        cid: String,
-                        did: String,
-                    ) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getBlob")
@@ -2086,11 +1977,7 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Gets blocks from a given repo.\""]
-                    pub fn main(
-                        token: &String,
-                        cids: Vec<String>,
-                        did: String,
-                    ) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getBlocks")
@@ -2103,11 +1990,7 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Gets the repo state.\""]
-                    pub fn main(
-                        token: &String,
-                        commit: String,
-                        did: String,
-                    ) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getCheckout")
@@ -2126,12 +2009,7 @@ pub mod lexicon {
                         pub commits: Vec<String>,
                     }
                     #[doc = "Description: \"Gets the path of repo commits\""]
-                    pub fn main(
-                        token: &String,
-                        did: String,
-                        earliest: String,
-                        latest: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getCommitPath")
@@ -2150,7 +2028,7 @@ pub mod lexicon {
                         pub root: String,
                     }
                     #[doc = "Description: \"Gets the current HEAD CID of a repo.\""]
-                    pub fn main(token: &String, did: String) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getHead")
@@ -2163,13 +2041,7 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Gets blocks needed for existence or non-existence of record.\""]
-                    pub fn main(
-                        token: &String,
-                        collection: String,
-                        commit: String,
-                        did: String,
-                        rkey: String,
-                    ) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getRecord")
@@ -2182,12 +2054,7 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Gets the repo state.\""]
-                    pub fn main(
-                        token: &String,
-                        did: String,
-                        earliest: String,
-                        latest: String,
-                    ) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.getRepo")
@@ -2206,12 +2073,7 @@ pub mod lexicon {
                         pub cids: Vec<String>,
                     }
                     #[doc = "Description: \"List blob cids for some range of commits\""]
-                    pub fn main(
-                        token: &String,
-                        did: String,
-                        earliest: String,
-                        latest: String,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.listBlobs")
@@ -2226,16 +2088,19 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    pub struct Repo {
+                        pub head: String,
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        pub repos: Vec<Repo>,
                         pub cursor: String,
+                        pub repos: Vec<Repo>,
                     }
                     #[doc = "Description: \"List dids and root cids of hosted repos\""]
-                    pub fn main(
-                        token: &String,
-                        cursor: String,
-                        limit: i64,
-                    ) -> Result<MainOutput, reqwest::Error> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.listRepos")
@@ -2243,19 +2108,12 @@ pub mod lexicon {
                             .send()?
                             .json::<MainOutput>();
                     }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Repo {
-                        pub head: String,
-                        pub did: String,
-                    }
                 }
                 pub mod notify_of_update {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Notify a crawling service of a recent update. Often when a long break between updates causes the connection with the crawling service to break.\""]
-                    pub fn main(token: &String, hostname: String) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.notifyOfUpdate")
@@ -2268,7 +2126,7 @@ pub mod lexicon {
                     #[allow(unused_imports)]
                     use super::lexicon;
                     #[doc = "Description: \"Request a service to persistently crawl hosted repos.\""]
-                    pub fn main(token: &String, hostname: String) -> Result<(), reqwest::Error> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
                         return client
                             .get("http://bsky.social/xrpc/com.atproto.sync.requestCrawl")
@@ -2283,39 +2141,43 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum Name {
-                        OutdatedCursor,
+                    pub struct RepoOp {
+                        pub cid: Option<String>,
+                        pub action: String,
+                        pub path: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub struct Info {
-                        pub message: String,
-                        pub name: String,
+                    pub struct Handle {
+                        pub did: String,
+                        pub seq: i64,
+                        pub handle: String,
+                        pub time: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Commit {
+                        pub ops: Vec<RepoOp>,
+                        pub blobs: Vec<String>,
+                        pub repo: String,
+                        pub rebase: bool,
+                        pub seq: i64,
+                        pub too_big: bool,
+                        pub blocks: String,
+                        pub time: String,
+                        pub prev: Option<String>,
+                        pub commit: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Migrate {
                         pub time: String,
-                        pub seq: i64,
                         pub did: String,
                         pub migrate_to: Option<String>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Commit {
-                        pub rebase: bool,
                         pub seq: i64,
-                        pub todo4_prev: Option<String>,
-                        pub blobs: Vec<String>,
-                        pub time: String,
-                        pub todo5_blocks: String,
-                        pub ops: Vec<RepoOp>,
-                        pub todo4_commit: String,
-                        pub too_big: bool,
-                        pub repo: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -2328,27 +2190,9 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum Action {
-                        Create,
-                        Update,
-                        Delete,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct RepoOp {
-                        pub action: String,
-                        pub todo4_cid: Option<String>,
-                        pub path: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Handle {
-                        pub time: String,
-                        pub seq: i64,
-                        pub did: String,
-                        pub handle: String,
+                    pub struct Info {
+                        pub message: String,
+                        pub name: String,
                     }
                 }
             }

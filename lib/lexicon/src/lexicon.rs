@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value as JSONValue;
 
 pub type XrpcParameter = String;
-pub type XrpcBody = String;
 pub type XrpcError = String;
 
 pub type JV = JSONValue;
@@ -22,17 +21,163 @@ pub enum StringFormat {
     Cid,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct LexString {
+    pub format: Option<StringFormat>,
+    pub description: Option<String>,
+    pub default: Option<String>,
+    pub min_length: Option<u64>,
+    pub max_length: Option<u64>,
+    pub min_graphemes: Option<u64>,
+    pub max_graphemes: Option<u64>,
+    pub r#enum: Option<Vec<String>>,
+    pub r#const: Option<String>,
+    pub known_values: Option<Vec<String>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct LexBoolean {
+    pub description: Option<String>,
+    pub default: Option<bool>,
+    pub r#const: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct LexInteger {
+    pub description: Option<String>,
+    pub default: Option<i64>,
+    pub minimum: Option<i64>,
+    pub maximum: Option<i64>,
+    pub r#enum: Option<Vec<i64>>,
+    pub r#const: Option<i64>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(tag = "type", rename_all = "camelCase")]
+pub enum Primitive {
+    Boolean(LexBoolean),
+    #[serde(rename = "integer")]
+    Integer(LexInteger),
+    String(LexString),
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct RefUnion {
+    pub description: Option<String>,
+    pub refs: Vec<String>,
+    pub closed: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum RefVariant {
+    Ref(Ref),
+    Union(RefUnion),
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum ArrayItem {
+    Primitive(Primitive),
+    Ref(Ref),
+    RefVariant(RefVariant),
+    Unknown(JV), // TODO
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Array {
+    pub description: Option<String>,
+    pub items: Box<ArrayItem>,
+    pub min_length: Option<u64>,
+    pub max_length: Option<u64>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum Parameter {
+    Primitive(Primitive),
+    Array(Array),
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub struct Parameters {
     pub required: Option<Vec<String>>,
-    pub properties: Option<HashMap<String, UserType>>,
+    pub properties: Option<HashMap<String, Parameter>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum XrpcBodySchema {
+    RefVariant(RefVariant),
+    Object(Object),
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct Output {
+pub struct XrpcBody {
     pub encoding: Option<String>,
-    pub schema: Option<Box<UserType>>,
+    pub schema: Option<XrpcBodySchema>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct XrpcQuery {
+    pub description: Option<String>,
+    pub parameters: Option<Parameters>,
+    pub output: Option<XrpcBody>,
+    pub errors: Option<Vec</* TODO */ JSONValue>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct XrpcProcedure {
+    pub description: Option<String>,
+    pub parameters: Option<Parameters>,
+    pub input: Option<XrpcBody>,
+    pub output: Option<XrpcBody>,
+    pub errors: Option<Vec</* TODO */ JSONValue>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct XrpcSubscription {
+    pub description: Option<String>,
+    pub parameters: Option<Parameters>,
+    pub message: Option</* TODO */ JSONValue>,
+    pub infos: Option<Vec</* TODO */ JSONValue>>,
+    pub errors: Option<Vec</* TODO */ JSONValue>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Ref {
+    pub description: Option<String>,
+    pub r#ref: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Blob {
+    pub description: Option<String>,
+    pub accept: Option<Vec<String>>,
+    pub max_size: Option<u64>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum ObjectField {
+    Primitive(Primitive),
+    RefVariant(RefVariant),
+    Array(Array),
+    Blob(Blob),
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Object {
+    pub description: Option<String>,
+    pub required: Option<Vec<String>>,
+    pub nullable: Option<Vec<String>>,
+    pub properties: Option<HashMap<String, ObjectField>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Enum {
+    pub known_values: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -41,89 +186,24 @@ pub enum UserType {
     Record {
         description: Option<String>,
         key: Option<String>,
-        record: HashMap<String, JSONValue>,
+        record: Box<UserType>,
     },
-
     #[serde(rename = "query")]
-    XrpcQuery {
-        description: Option<String>,
-        parameters: Option<Parameters>,
-        output: Option<Output>,
-        errors: Option<Vec</* TODO */ JSONValue>>,
-    },
+    XrpcQuery(XrpcQuery),
     #[serde(rename = "procedure")]
-    XrpcProcedure {
-        description: Option<String>,
-        parameters: Option<Parameters>,
-        input: Option</* TODO */ JSONValue>,
-        output: Option<Output>,
-        errors: Option<Vec</* TODO */ JSONValue>>,
-    },
+    XrpcProcedure(XrpcProcedure),
     #[serde(rename = "subscription")]
-    XrpcSubscription {
-        description: Option<String>,
-        parameters: Option<Parameters>,
-        message: Option</* TODO */ JSONValue>,
-        infos: Option<Vec</* TODO */ JSONValue>>,
-        errors: Option<Vec</* TODO */ JSONValue>>,
-    },
+    XrpcSubscription(XrpcSubscription),
 
-    Blob {
-        description: Option<String>,
-        accept: Option<Vec<String>>,
-        max_size: Option<u64>,
-    },
+    Blob(Blob),
 
-    Array {
-        description: Option<String>,
-        items: Box<UserType>,
-        min_length: Option<u64>,
-        max_length: Option<u64>,
-    },
+    Array(Array),
     Token {
         description: Option<String>,
     },
-    Object {
-        description: Option<String>,
-        required: Option<Vec<String>>,
-        nullable: Option<Vec<String>>,
-        properties: Option<HashMap<String, UserType>>,
-    },
-    Union {
-        description: Option<String>,
-        refs: Vec<String>,
-        closed: Option<bool>,
-    },
-    Boolean {
-        description: Option<String>,
-        default: Option<bool>,
-        r#const: Option<bool>,
-    },
-    Integer {
-        description: Option<String>,
-        default: Option<i64>,
-        minimum: Option<i64>,
-        maximum: Option<i64>,
-        r#enum: Option<Vec<i64>>,
-        r#const: Option<i64>,
-    },
-    Ref {
-        description: Option<String>,
-        r#ref: String,
-    },
-    #[serde(rename_all = "camelCase")]
-    String {
-        format: Option<StringFormat>,
-        description: Option<String>,
-        default: Option<String>,
-        min_length: Option<u64>,
-        max_length: Option<u64>,
-        min_graphemes: Option<u64>,
-        max_graphemes: Option<u64>,
-        r#enum: Option<Vec<String>>,
-        r#const: Option<String>,
-        known_values: Option<Vec<String>>,
-    },
+    Object(Object),
+    Union(RefVariant),
+    Ref(Ref),
     Bytes {
         description: Option<String>,
         min_length: Option<u64>,
@@ -132,6 +212,10 @@ pub enum UserType {
     CidLink {
         description: Option<String>,
     },
+
+    Primitive(Primitive),
+
+    Enum(Enum),
 
     #[serde(other)]
     Unknown,
@@ -150,9 +234,10 @@ pub struct LexiconDoc {
 }
 
 impl FromStr for LexiconDoc {
-    type Err = serde_json::Error;
+    type Err = serde_path_to_error::Error<serde_json::Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        serde_json::from_str(s)
+        let deserializer = &mut serde_json::Deserializer::from_str(s);
+        serde_path_to_error::deserialize(deserializer)
     }
 }

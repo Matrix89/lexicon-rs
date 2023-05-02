@@ -1,6 +1,6 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{Output, Parameters, JV};
-use proc_macro2::{Ident, TokenStream};
+use lexicon::lexicon::{Parameters, UserType, XrpcBody, XrpcQuery, JV};
+use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::{
@@ -25,65 +25,16 @@ fn gen_body(
 }
 
 impl CodeGen {
-    pub fn gen_output(&self, name: &str, output: Output) -> (TokenStream, TokenStream) {
-        match output.encoding {
-            Some(encoding) if encoding.as_str() == "application/json" => {
-                let output_name = format!("{}Output", name.to_case(Case::Pascal));
-                let schema = *output.schema.unwrap();
-
-                let code = match schema {
-                    lexicon::lexicon::UserType::Object {
-                        description,
-                        required,
-                        nullable,
-                        properties,
-                    } => self.gen_object(
-                        &output_name,
-                        &"".to_owned(),
-                        description.unwrap_or_else(|| "".to_owned()),
-                        required.unwrap_or_default(),
-                        nullable.unwrap_or_default(),
-                        properties.unwrap_or_default(),
-                    ),
-                    lexicon::lexicon::UserType::Ref { description, r#ref } => {
-                        let target = build_ref_target(&r#ref);
-                        return (quote! { #target }, quote! {});
-                    }
-                    _ => {
-                        println!("Unsupported output type: {:?}", schema);
-                        quote! {}
-                    }
-                };
-
-                let t = format_ident!("{}", output_name);
-                (quote! {#t}, code)
-            }
-            Some(v) => {
-                println!("Unsupported output encoding: {:?}", v);
-                (quote! {()}, quote! {})
-            }
-            _ => {
-                println!("Missing output type: {:?}", output);
-                (quote! {()}, quote! {})
-            }
-        }
-    }
-
-    pub fn gen_query(
-        &self,
-        namespace: &String,
-        name: &String,
-        description: Option<String>,
-        parameters: Option<Parameters>,
-        output: Option<Output>,
-        errors: Option<Vec</* TODO */ JV>>,
-    ) -> TokenStream {
+    pub fn gen_query(&self, namespace: &String, name: &String, query: XrpcQuery) -> TokenStream {
         let mut doc = DocBuilder::new();
-        doc.add_optional_item("Description", description);
+        doc.add_optional_item("Description", &query.description);
 
-        let parameters = gen_parameters(parameters.unwrap_or_default());
-        let (output_type, output) = self.gen_output(&name, output.unwrap_or_default());
-        let body = gen_body(&name, &namespace, &output_type, &output);
+        let parameters = gen_parameters(query.parameters.unwrap_or_default());
+        let (output_type, output) = self.gen_body(
+            &format!("{}Output", name.to_case(Case::Pascal)),
+            query.output.unwrap_or_default(),
+        );
+        let body = gen_body(name, namespace, &output_type, &output);
 
         let name = format_ident!("{}", name.to_case(Case::Snake));
 

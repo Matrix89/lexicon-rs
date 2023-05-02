@@ -1,5 +1,5 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::StringFormat;
+use lexicon::lexicon::{LexString, StringFormat};
 use nsid::NSIDNode;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -10,20 +10,10 @@ pub fn gen_string(
     name: &String,
     tree: &NSIDNode,
     namespace: &String,
-
-    format: Option<StringFormat>,
-    description: Option<String>,
-    default: Option<String>,
-    min_length: Option<u64>,
-    max_length: Option<u64>,
-    min_graphemes: Option<u64>,
-    max_graphemes: Option<u64>,
-    r#enum: Option<Vec<String>>,
-    r#const: Option<String>,
-    known_values: Option<Vec<String>>,
+    str: &LexString,
 ) -> TokenStream {
     let name = format_ident!("{}", name.to_case(Case::Pascal));
-    match known_values {
+    match &str.known_values {
         Some(values) => {
             //let (union, union_impl) = gen_union(name, values);
             let values = values

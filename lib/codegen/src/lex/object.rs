@@ -1,12 +1,12 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::UserType;
+use lexicon::lexicon::{ArrayItem, ObjectField, Primitive, UserType};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::HashMap;
 
 use crate::{doc_builder::DocBuilder, CodeGen};
 
-use super::{string::gen_string, union::gen_union};
+use super::{array::gen_array, r#ref::gen_ref_variant, string::gen_string, union::gen_union};
 
 pub fn build_ref_target(r#ref: &str) -> syn::Path {
     let ref_target = if r#ref.starts_with('#') {
@@ -27,7 +27,7 @@ pub fn build_ref_target(r#ref: &str) -> syn::Path {
     ref_target
 }
 
-fn gen_field_name(name: &str) -> Ident {
+pub fn gen_field_name(name: &str) -> Ident {
     let name = name.to_case(Case::Snake);
     let name = match name.as_str() {
         "type" => format!("r#{}", name),
@@ -43,176 +43,79 @@ impl CodeGen {
         name: &String,
         namespace: &String,
         object_name: &String,
-        property: UserType,
+        property: ObjectField,
         is_required: bool,
         is_nullable: bool,
     ) -> (TokenStream, Option<TokenStream>) {
         let mut doc = DocBuilder::new();
 
         let (name, prop_type, additional_code) = match property {
-            UserType::String {
-                description,
-                format,
-                default,
-                min_length,
-                max_length,
-                min_graphemes,
-                max_graphemes,
-                r#enum,
-                r#const,
-                known_values,
-            } => {
-                doc.add_optional_item("description", description.clone());
-                doc.add_optional_item("format", format);
-                doc.add_optional_item("default", default.clone());
-                doc.add_optional_item("min_length", min_length);
-                doc.add_optional_item("max_length", max_length);
-                doc.add_optional_item("min_graphemes", min_graphemes);
-                doc.add_optional_item("max_graphemes", max_graphemes);
-                doc.add_optional_item("enum", r#enum.clone());
-                doc.add_optional_item("const", r#const.clone());
-                doc.add_optional_item("known_values", known_values.clone());
+            ObjectField::Primitive(primitive) => match primitive {
+                Primitive::String(str) => {
+                    doc.add_optional_item("description", &str.description);
+                    doc.add_optional_item("format", &str.format);
+                    doc.add_optional_item("default", &str.default);
+                    doc.add_optional_item("min_length", &str.min_length);
+                    doc.add_optional_item("max_length", &str.max_length);
+                    doc.add_optional_item("min_graphemes", &str.min_graphemes);
+                    doc.add_optional_item("max_graphemes", &str.max_graphemes);
+                    doc.add_optional_item("enum", &str.r#enum);
+                    doc.add_optional_item("const", &str.r#const);
+                    doc.add_optional_item("known_values", &str.known_values);
 
-                match known_values {
-                    Some(ref know_values) => {
-                        let r = gen_string(
-                            name,
-                            &self.tree,
-                            namespace,
-                            None,
-                            description,
-                            default,
-                            min_length,
-                            max_length,
-                            min_graphemes,
-                            max_graphemes,
-                            r#enum,
-                            r#const,
-                            known_values,
-                        );
-                        let name = gen_field_name(name);
-                        let prop_type = quote! { String };
-                        (name, prop_type, Some(r))
-                    }
-                    None => {
-                        let name = gen_field_name(name);
-                        let prop_type = quote! { String };
-                        (name, prop_type, None)
+                    match str.known_values {
+                        Some(ref know_values) => {
+                            let r = gen_string(name, &self.tree, namespace, &str);
+                            let name = gen_field_name(name);
+                            let prop_type = quote! { String };
+                            (name, prop_type, Some(r))
+                        }
+                        None => {
+                            let name = gen_field_name(name);
+                            let prop_type = quote! { String };
+                            (name, prop_type, None)
+                        }
                     }
                 }
-            }
-            UserType::Ref { description, r#ref } => {
-                doc.add_optional_item("description", description);
+                Primitive::Boolean(boolean) => {
+                    doc.add_optional_item("description", &boolean.description);
+                    doc.add_optional_item("default", &boolean.default);
+                    doc.add_optional_item("const", &boolean.r#const);
 
+                    let name = gen_field_name(name);
+                    (name, quote! { bool }, None)
+                }
+                Primitive::Integer(int) => {
+                    doc.add_optional_item("description", &int.description);
+                    doc.add_optional_item("default", &int.default);
+                    doc.add_optional_item("minimum", &int.minimum);
+                    doc.add_optional_item("maximum", &int.maximum);
+                    doc.add_optional_item("enum", &int.r#enum);
+                    doc.add_optional_item("const", &int.r#const);
+
+                    let name = gen_field_name(name);
+
+                    (name, quote! { i64 }, None)
+                }
+            },
+            ObjectField::RefVariant(variant) => {
+                let (enum_name, r#enum) = gen_ref_variant(&name, variant);
                 let name = gen_field_name(name);
-                let ref_target = build_ref_target(&r#ref);
-                (name, quote! { #ref_target }, None)
+                (name, enum_name, r#enum)
             }
-            UserType::Boolean {
-                description,
-                default,
-                r#const,
-            } => {
-                doc.add_optional_item("description", description);
-                doc.add_optional_item("default", default);
-                doc.add_optional_item("const", r#const);
-
-                let name = gen_field_name(name);
-                (name, quote! { bool }, None)
-            }
-            UserType::Array {
-                description,
-                items,
-                min_length,
-                max_length,
-            } => {
-                doc.add_optional_item("description", description);
-                doc.add_optional_item("min_length", min_length);
-                doc.add_optional_item("max_length", max_length);
-                let (array_type, additional_code) = match *items {
-                    UserType::Ref { ref r#ref, .. } => {
-                        let ref_target = build_ref_target(&r#ref);
-                        (quote! { #ref_target }, None)
-                    }
-                    UserType::String { .. } => (quote! { String }, None),
-                    UserType::Integer { .. } => (quote! { i64 }, None),
-                    UserType::Union { refs, .. } => {
-                        let (enum_name, r#enum) = gen_union(name, refs);
-                        (quote! { #enum_name }, Some(r#enum))
-                    }
-                    UserType::Unknown { .. } => (quote! { String }, None),
-                    UserType::CidLink { .. } => (quote! { String }, None),
-                    v => todo!("{:?}", v),
-                };
-                let name = gen_field_name(name);
-
-                let r#type = quote! { Vec<#array_type> };
-                (name, r#type, additional_code)
-            }
-            UserType::Integer {
-                description,
-                default,
-                minimum,
-                maximum,
-                r#enum,
-                r#const,
-            } => {
-                doc.add_optional_item("description", description);
-                doc.add_optional_item("default", default);
-                doc.add_optional_item("minimum", minimum);
-                doc.add_optional_item("maximum", maximum);
-                doc.add_optional_item("enum", r#enum);
-                doc.add_optional_item("const", r#const);
-
-                let name = gen_field_name(name);
-
-                (name, quote! { i64 }, None)
-            }
-            UserType::Blob {
-                description,
-                accept,
-                max_size,
-            } => {
-                doc.add_optional_item("description", description);
-                doc.add_optional_item("accept", accept);
-                doc.add_optional_item("max_size", max_size);
+            ObjectField::Blob(blob) => {
+                doc.add_optional_item("description", &blob.description);
+                doc.add_optional_item("accept", &blob.accept);
+                doc.add_optional_item("max_size", &blob.max_size);
                 let name = format_ident!("{}", name);
                 (name, quote! { String }, None)
             }
-            UserType::Union {
-                description,
-                refs,
-                closed,
-            } => {
-                doc.add_optional_item("description", description);
-                doc.add_optional_item("closed", closed);
-                let (enum_name, r#enum) = gen_union(&(object_name.to_owned() + &name), refs);
-                let name = format_ident!("{}", name);
-                (name, quote! { #enum_name }, Some(r#enum))
-            }
-            UserType::Unknown => {
-                //doc.add_optional_item("description", description);
+            ObjectField::Array(array) => {
+                doc.add_optional_item("description", &array.description);
+                doc.add_optional_item("min_length", &array.min_length);
+                doc.add_optional_item("max_length", &array.max_length);
 
-                let name = format_ident!("todo4_{}", name);
-                (name, quote! { String }, None)
-            }
-            UserType::CidLink { description } => {
-                doc.add_optional_item("description", description);
-
-                let name = format_ident!("todo3_{}", name);
-                (name, quote! { String }, None)
-            }
-            UserType::Bytes {
-                description,
-                min_length,
-                max_length,
-            } => {
-                doc.add_optional_item("description", description);
-                doc.add_optional_item("min_length", min_length);
-                doc.add_optional_item("max_length", max_length);
-
-                let name = format_ident!("todo5_{}", name);
-                (name, quote! { String }, None)
+                gen_array(name, array)
             }
             _ => todo!("{:?}", property),
         };
@@ -243,7 +146,7 @@ impl CodeGen {
         description: String,
         required: Vec<String>,
         nullable: Vec<String>,
-        properties: HashMap<String, UserType>,
+        properties: HashMap<String, ObjectField>,
     ) -> TokenStream {
         let mut properties_code = vec![];
         let mut additional_declarations = vec![];
