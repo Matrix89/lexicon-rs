@@ -9,2453 +9,2201 @@ The code is nowhere close to being of any quality as of yet
 This is the current output for all the lexicons defined [here](https://github.com/bluesky-social/atproto/tree/main/lexicons)
 
 ```rust
-pub mod Lexicon {
-    pub mod App {
-        pub mod Bsky {
-            pub mod Actor {
-                pub mod Defs {
-                    #[doc = ""]
-                    pub struct ViewerState {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub muted: bool,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub blocked_by: bool,
-                        #[doc = "format: AtUri"]
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub blocking: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub followed_by: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub following: String,
-                    }
-                    #[doc = ""]
+struct Xrpc {}
+pub mod lexicon {
+    #[allow(unused_imports)]
+    use super::lexicon;
+    pub mod app {
+        #[allow(unused_imports)]
+        use super::lexicon;
+        pub mod bsky {
+            #[allow(unused_imports)]
+            use super::lexicon;
+            pub mod actor {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ProfileViewDetailed {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub viewer: ViewerState,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub postsCount: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub display_name: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub followersCount: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub description: String,
-                        #[doc = "required: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
                         pub indexed_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: Handle"]
-                        #[doc = "nullable: false"]
-                        pub handle: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        #[doc = "required: true"]
-                        pub did: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub followsCount: i64,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub avatar: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub banner: String,
-                    }
-                    #[doc = ""]
-                    pub struct ProfileViewBasic {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub display_name: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        pub did: String,
-                        #[doc = "format: Handle"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub handle: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub avatar: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub viewer: ViewerState,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                    }
-                    #[doc = ""]
-                    pub struct ProfileView {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
+                        pub display_name: String,
                         pub description: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub avatar: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: Handle"]
-                        #[doc = "nullable: false"]
-                        pub handle: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub display_name: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub followers_count: i64,
                         pub viewer: ViewerState,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub indexed_at: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
                         pub did: String,
+                        pub posts_count: i64,
+                        pub follows_count: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ProfileViewBasic {
+                        pub handle: String,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub viewer: ViewerState,
+                        pub display_name: String,
+                        pub avatar: String,
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewerState {
+                        pub following: String,
+                        pub blocking: String,
+                        pub followed_by: String,
+                        pub blocked_by: bool,
+                        pub muted: bool,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ProfileView {
+                        pub description: String,
+                        pub display_name: String,
+                        pub did: String,
+                        pub avatar: String,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub indexed_at: String,
+                        pub viewer: ViewerState,
+                        pub handle: String,
                     }
                 }
-                pub mod GetProfile {
+                pub mod get_profile {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     pub fn main(
-                        actor: String,
-                    ) -> Option<crate::Lexicon::App::Bsky::Actor::Defs::ProfileViewDetailed>
+                        token: &String,
+                    ) -> Result<lexicon::app::bsky::actor::defs::ProfileViewDetailed, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/actor/getProfile");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.actor.getProfile")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::app::bsky::actor::defs::ProfileViewDetailed>();
                     }
                 }
-                pub mod GetProfiles {
-                    #[doc = ""]
+                pub mod get_profiles {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub profiles:
-                            Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileViewDetailed>,
+                        pub profiles: Vec<lexicon::app::bsky::actor::defs::ProfileViewDetailed>,
                     }
-                    pub fn main(actors: Vec<String>) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/actor/getProfiles");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.actor.getProfiles")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetSuggestions {
-                    #[doc = ""]
+                pub mod get_suggestions {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub actors: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
+                        pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Get a list of actors suggested for following. Used in discovery UIs.\""]
-                    pub fn main(limit: i64, cursor: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/actor/getSuggestions");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.actor.getSuggestions")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod Profile {}
-                pub mod SearchActors {
-                    #[doc = ""]
+                pub mod profile {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                }
+                pub mod search_actors {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub cursor: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub actors: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
+                        pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Find actors matching search criteria.\""]
-                    pub fn main(limit: i64, cursor: String, term: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/actor/searchActors");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.actor.searchActors")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod SearchActorsTypeahead {
-                    #[doc = ""]
+                pub mod search_actors_typeahead {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub actors: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileViewBasic>,
+                        pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileViewBasic>,
                     }
                     #[doc = "Description: \"Find actor suggestions for a search term.\""]
-                    pub fn main(limit: i64, term: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .get("http://localhost:8080/xrpc/app/bsky/actor/searchActorsTypeahead");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.actor.searchActorsTypeahead")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
             }
-            pub mod Embed {
-                pub mod External {
-                    #[doc = ""]
-                    pub struct External {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub title: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: Uri"]
-                        #[doc = "nullable: false"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        #[doc = "accept: [\"image/*\"]"]
-                        pub thumb: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub description: String,
-                    }
-                    #[doc = ""]
+            pub mod embed {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod external {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ViewExternal {
-                        #[doc = "required: true"]
-                        #[doc = "format: Uri"]
-                        #[doc = "nullable: false"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub description: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub thumb: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                        pub uri: String,
                         pub title: String,
                     }
-                    #[doc = ""]
-                    pub struct View {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub external: ViewExternal,
-                    }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Main {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub external: External,
                     }
-                }
-                pub mod Images {
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct View {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub images: Vec<ViewImage>,
+                        pub external: ViewExternal,
                     }
-                    #[doc = ""]
-                    pub struct Main {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub images: Vec<Image>,
-                    }
-                    #[doc = ""]
-                    pub struct Image {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "accept: [\"image/*\"]"]
-                        pub image: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub alt: String,
-                    }
-                    #[doc = ""]
-                    pub struct ViewImage {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub fullsize: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub alt: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct External {
+                        pub uri: String,
+                        pub description: String,
+                        pub title: String,
                         pub thumb: String,
                     }
                 }
-                pub mod Record {
-                    #[doc = ""]
+                pub mod images {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewImage {
+                        pub fullsize: String,
+                        pub alt: String,
+                        pub thumb: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct View {
+                        pub images: Vec<ViewImage>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
+                        pub images: Vec<Image>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Image {
+                        pub alt: String,
+                        pub image: String,
+                    }
+                }
+                pub mod record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum RecordType {
+                        ViewRecord(Box<ViewRecord>),
+                        ViewNotFound(Box<ViewNotFound>),
+                        ViewBlocked(Box<ViewBlocked>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct View {
+                        pub record: RecordType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewBlocked {
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub enum EmbedsType {
                         ImagesView,
                         ExternalView,
                         RecordView,
                         RecordWithMediaView,
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ViewRecord {
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub indexed_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Cid"]
-                        pub cid: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo4_value: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub author: crate::Lexicon::App::Bsky::Actor::Defs::ProfileViewBasic,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
                         pub embeds: Vec<EmbedsType>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                    }
-                    #[doc = ""]
-                    pub struct ViewNotFound {
-                        #[doc = "format: AtUri"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub uri: String,
+                        pub indexed_at: String,
+                        pub cid: String,
+                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub value: String,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Main {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub record: crate::Lexicon::Com::Atproto::Repo::StrongRef::Main,
+                        pub record: lexicon::com::atproto::repo::strong_ref::Main,
                     }
-                    #[doc = ""]
-                    pub enum ViewrecordType {
-                        ViewRecord(Box<ViewRecord>),
-                        ViewNotFound(Box<ViewNotFound>),
-                        ViewBlocked(Box<ViewBlocked>),
-                    }
-                    pub struct View {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub record: ViewrecordType,
-                    }
-                    #[doc = ""]
-                    pub struct ViewBlocked {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: AtUri"]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ViewNotFound {
                         pub uri: String,
                     }
                 }
-                pub mod RecordWithMedia {
-                    #[doc = ""]
-                    pub enum MainmediaType {
+                pub mod record_with_media {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum MediaType {
+                        ImagesView,
+                        ExternalView,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct View {
+                        pub media: MediaType,
+                        pub record: lexicon::app::bsky::embed::record::View,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum MediaType {
                         ImagesMain,
                         ExternalMain,
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Main {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub record: crate::Lexicon::App::Bsky::Embed::Record::Main,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub media: MainmediaType,
-                    }
-                    #[doc = ""]
-                    pub enum ViewmediaType {
-                        ImagesView,
-                        ExternalView,
-                    }
-                    pub struct View {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub record: crate::Lexicon::App::Bsky::Embed::Record::View,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub media: ViewmediaType,
+                        pub record: lexicon::app::bsky::embed::record::Main,
+                        pub media: MediaType,
                     }
                 }
             }
-            pub mod Feed {
-                pub mod Defs {
-                    #[doc = ""]
-                    pub struct ReasonRepost {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub by: crate::Lexicon::App::Bsky::Actor::Defs::ProfileViewBasic,
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        pub indexed_at: String,
-                    }
-                    #[doc = ""]
-                    pub enum PostViewembedType {
-                        ImagesView,
-                        ExternalView,
-                        RecordView,
-                        RecordWithMediaView,
-                    }
-                    pub struct PostView {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo4_record: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub repostCount: i64,
-                        #[doc = "format: AtUri"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub author: crate::Lexicon::App::Bsky::Actor::Defs::ProfileViewBasic,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        pub indexed_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub replyCount: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub viewer: ViewerState,
-                        #[doc = "required: true"]
-                        #[doc = "format: Cid"]
-                        #[doc = "nullable: false"]
-                        pub cid: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub embed: PostViewembedType,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub likeCount: i64,
-                    }
-                    #[doc = ""]
-                    pub struct BlockedPost {
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub uri: String,
-                        #[doc = "const: true"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub blocked: bool,
-                    }
-                    #[doc = ""]
-                    pub enum ThreadViewPostparentType {
-                        ThreadViewPost(Box<ThreadViewPost>),
-                        NotFoundPost(Box<NotFoundPost>),
-                        BlockedPost(Box<BlockedPost>),
-                    }
+            pub mod feed {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub enum RepliesType {
                         ThreadViewPost(Box<ThreadViewPost>),
                         NotFoundPost(Box<NotFoundPost>),
                         BlockedPost(Box<BlockedPost>),
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum ParentType {
+                        ThreadViewPost(Box<ThreadViewPost>),
+                        NotFoundPost(Box<NotFoundPost>),
+                        BlockedPost(Box<BlockedPost>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ThreadViewPost {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub post: PostView,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub parent: ThreadViewPostparentType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub replies: Vec<RepliesType>,
+                        pub post: PostView,
+                        pub parent: ParentType,
                     }
-                    #[doc = ""]
-                    pub struct NotFoundPost {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "const: true"]
-                        pub not_found: bool,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: AtUri"]
-                        pub uri: String,
-                    }
-                    #[doc = ""]
-                    pub struct ReplyRef {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub parent: crate::Lexicon::App::Bsky::Feed::Defs::PostView,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub root: crate::Lexicon::App::Bsky::Feed::Defs::PostView,
-                    }
-                    #[doc = ""]
-                    pub enum FeedViewPostreasonType {
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum ReasonType {
                         ReasonRepost(Box<ReasonRepost>),
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct FeedViewPost {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub post: lexicon::app::bsky::feed::defs::PostView,
+                        pub reason: ReasonType,
                         pub reply: ReplyRef,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub reason: FeedViewPostreasonType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub post: crate::Lexicon::App::Bsky::Feed::Defs::PostView,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ViewerState {
-                        #[doc = "format: AtUri"]
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub like: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub repost: String,
+                        pub like: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum EmbedType {
+                        ImagesView,
+                        ExternalView,
+                        RecordView,
+                        RecordWithMediaView,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct PostView {
+                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub record: String,
+                        pub like_count: i64,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub reply_count: i64,
+                        pub uri: String,
+                        pub repost_count: i64,
+                        pub embed: EmbedType,
+                        pub indexed_at: String,
+                        pub cid: String,
+                        pub viewer: ViewerState,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReasonRepost {
+                        pub by: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub indexed_at: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct NotFoundPost {
+                        pub uri: String,
+                        pub not_found: bool,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReplyRef {
+                        pub parent: lexicon::app::bsky::feed::defs::PostView,
+                        pub root: lexicon::app::bsky::feed::defs::PostView,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct BlockedPost {
+                        pub uri: String,
+                        pub blocked: bool,
                     }
                 }
-                pub mod GetAuthorFeed {
-                    #[doc = ""]
+                pub mod get_author_feed {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub feed: Vec<crate::Lexicon::App::Bsky::Feed::Defs::FeedViewPost>,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub cursor: String,
+                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                     }
                     #[doc = "Description: \"A view of an actor's feed.\""]
-                    pub fn main(cursor: String, actor: String, limit: i64) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/feed/getAuthorFeed");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.feed.getAuthorFeed")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetLikes {
-                    #[doc = ""]
+                pub mod get_likes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Like {
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub indexed_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
                         pub created_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub actor: crate::Lexicon::App::Bsky::Actor::Defs::ProfileView,
+                        pub actor: lexicon::app::bsky::actor::defs::ProfileView,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Cid"]
-                        #[doc = "required: false"]
-                        pub cid: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: AtUri"]
                         pub uri: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                        pub cid: String,
                         pub likes: Vec<Like>,
                     }
-                    pub fn main(
-                        limit: i64,
-                        uri: String,
-                        cid: String,
-                        cursor: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/feed/getLikes");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.feed.getLikes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetPostThread {
-                    #[doc = ""]
-                    pub enum MainOutputthreadType {
+                pub mod get_post_thread {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum ThreadType {
                         DefsThreadViewPost,
                         DefsNotFoundPost,
                         DefsBlockedPost,
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub thread: MainOutputthreadType,
+                        pub thread: ThreadType,
                     }
-                    pub fn main(depth: i64, uri: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/feed/getPostThread");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.feed.getPostThread")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetPosts {
-                    #[doc = ""]
+                pub mod get_posts {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub posts: Vec<crate::Lexicon::App::Bsky::Feed::Defs::PostView>,
+                        pub posts: Vec<lexicon::app::bsky::feed::defs::PostView>,
                     }
                     #[doc = "Description: \"A view of an actor's feed.\""]
-                    pub fn main(uris: Vec<String>) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/feed/getPosts");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.feed.getPosts")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetRepostedBy {
-                    #[doc = ""]
+                pub mod get_reposted_by {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub reposted_by: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub cursor: String,
-                        #[doc = "format: Cid"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub cid: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                        pub cursor: String,
                         pub uri: String,
+                        pub reposted_by: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
-                    pub fn main(
-                        limit: i64,
-                        cid: String,
-                        uri: String,
-                        cursor: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/feed/getRepostedBy");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.feed.getRepostedBy")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetTimeline {
-                    #[doc = ""]
+                pub mod get_timeline {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
+                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub feed: Vec<crate::Lexicon::App::Bsky::Feed::Defs::FeedViewPost>,
                     }
                     #[doc = "Description: \"A view of the user's home timeline.\""]
-                    pub fn main(
-                        limit: i64,
-                        cursor: String,
-                        algorithm: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/feed/getTimeline");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.feed.getTimeline")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod Like {}
-                pub mod Post {
-                    #[doc = "Deprecated. Use app.bsky.richtext instead -- A text segment. Start is inclusive, end is exclusive. Indices are for utf16-encoded strings."]
+                pub mod like {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                }
+                pub mod post {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Entity {
+                        pub r#type: String,
+                        pub index: TextSlice,
+                        pub value: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReplyRef {
+                        pub root: lexicon::com::atproto::repo::strong_ref::Main,
+                        pub parent: lexicon::com::atproto::repo::strong_ref::Main,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct TextSlice {
-                        #[doc = "minimum: 0"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub end: i64,
-                        #[doc = "required: true"]
-                        #[doc = "minimum: 0"]
-                        #[doc = "nullable: false"]
                         pub start: i64,
                     }
-                    #[doc = ""]
-                    pub struct ReplyRef {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub root: crate::Lexicon::Com::Atproto::Repo::StrongRef::Main,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub parent: crate::Lexicon::Com::Atproto::Repo::StrongRef::Main,
-                    }
-                    #[doc = "Deprecated: use facets instead."]
-                    pub struct Entity {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub index: TextSlice,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub value: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "description: \"Expected values are 'mention' and 'link'.\""]
-                        #[doc = "required: true"]
-                        pub r#type: String,
-                    }
                 }
-                pub mod Repost {}
+                pub mod repost {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                }
             }
-            pub mod Graph {
-                pub mod Block {}
-                pub mod Follow {}
-                pub mod GetBlocks {
-                    #[doc = ""]
+            pub mod graph {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod block {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                }
+                pub mod follow {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                }
+                pub mod get_blocks {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub blocks: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub cursor: String,
+                        pub blocks: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who is the requester's account blocking?\""]
-                    pub fn main(limit: i64, cursor: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/graph/getBlocks");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.graph.getBlocks")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetFollowers {
-                    #[doc = ""]
+                pub mod get_followers {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub followers: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub subject: lexicon::app::bsky::actor::defs::ProfileView,
+                        pub followers: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub subject: crate::Lexicon::App::Bsky::Actor::Defs::ProfileView,
                     }
                     #[doc = "Description: \"Who is following an actor?\""]
-                    pub fn main(cursor: String, actor: String, limit: i64) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/graph/getFollowers");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.graph.getFollowers")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetFollows {
-                    #[doc = ""]
+                pub mod get_follows {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub follows: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub subject: crate::Lexicon::App::Bsky::Actor::Defs::ProfileView,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
+                        pub follows: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub cursor: String,
+                        pub subject: lexicon::app::bsky::actor::defs::ProfileView,
                     }
                     #[doc = "Description: \"Who is an actor following?\""]
-                    pub fn main(limit: i64, cursor: String, actor: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/graph/getFollows");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.graph.getFollows")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetMutes {
-                    #[doc = ""]
+                pub mod get_mutes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub mutes: Vec<crate::Lexicon::App::Bsky::Actor::Defs::ProfileView>,
+                        pub mutes: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who does the viewer mute?\""]
-                    pub fn main(cursor: String, limit: i64) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/graph/getMutes");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.graph.getMutes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod MuteActor {
+                pub mod mute_actor {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Mute an actor by did or handle.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/app/bsky/graph/muteActor");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/app.bsky.graph.muteActor")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod UnmuteActor {
+                pub mod unmute_actor {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Unmute an actor by did or handle.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/app/bsky/graph/unmuteActor");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/app.bsky.graph.unmuteActor")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
-            pub mod Notification {
-                pub mod GetUnreadCount {
-                    #[doc = ""]
+            pub mod notification {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod get_unread_count {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub count: i64,
                     }
-                    pub fn main(seen_at: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .get("http://localhost:8080/xrpc/app/bsky/notification/getUnreadCount");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.notification.getUnreadCount")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod ListNotifications {
-                    #[doc = ""]
-                    pub enum Reason {
-                        Like,
-                        Repost,
-                        Follow,
-                        Mention,
-                        Reply,
-                        Quote,
-                    }
-                    pub struct Notification {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Cid"]
-                        pub cid: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub todo4_record: String,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub indexed_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub is_read: bool,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: AtUri"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "description: \"Expected values are 'like', 'repost', 'follow', 'mention', 'reply', and 'quote'.\""]
-                        #[doc = "known_values: [\"like\", \"repost\", \"follow\", \"mention\", \"reply\", \"quote\"]"]
-                        pub reason: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub author: crate::Lexicon::App::Bsky::Actor::Defs::ProfileView,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: AtUri"]
-                        pub reason_subject: String,
-                    }
-                    #[doc = ""]
+                pub mod list_notifications {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub cursor: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub notifications: Vec<Notification>,
                     }
-                    pub fn main(limit: i64, cursor: String, seen_at: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get(
-                            "http://localhost:8080/xrpc/app/bsky/notification/listNotifications",
-                        );
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.notification.listNotifications")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Notification {
+                        pub author: lexicon::app::bsky::actor::defs::ProfileView,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub reason: String,
+                        pub reason_subject: String,
+                        pub record: String,
+                        pub cid: String,
+                        pub is_read: bool,
+                        pub indexed_at: String,
+                        pub uri: String,
                     }
                 }
-                pub mod UpdateSeen {
+                pub mod update_seen {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Notify server that the user has seen notifications.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/app/bsky/notification/updateSeen");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/app.bsky.notification.updateSeen")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
-            pub mod Richtext {
-                pub mod Facet {
-                    #[doc = ""]
+            pub mod richtext {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod facet {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Link {
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Mention {
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ByteSlice {
+                        pub byte_start: i64,
+                        pub byte_end: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub enum FeaturesType {
                         Mention(Box<Mention>),
                         Link(Box<Link>),
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Main {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub index: ByteSlice,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub features: Vec<FeaturesType>,
-                    }
-                    #[doc = "A text segment. Start is inclusive, end is exclusive. Indices are for utf8-encoded strings."]
-                    pub struct ByteSlice {
-                        #[doc = "minimum: 0"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub byteStart: i64,
-                        #[doc = "minimum: 0"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub byteEnd: i64,
-                    }
-                    #[doc = "A facet feature for actor mentions."]
-                    pub struct Mention {
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub did: String,
-                    }
-                    #[doc = "A facet feature for links."]
-                    pub struct Link {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Uri"]
-                        #[doc = "required: true"]
-                        pub uri: String,
+                        pub index: ByteSlice,
                     }
                 }
             }
-            pub mod Unspecced {
-                pub mod GetPopular {
-                    #[doc = ""]
+            pub mod unspecced {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod get_popular {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub feed: Vec<crate::Lexicon::App::Bsky::Feed::Defs::FeedViewPost>,
+                        pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
                     }
                     #[doc = "Description: \"An unspecced view of globally popular items\""]
-                    pub fn main(limit: i64, cursor: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/app/bsky/unspecced/getPopular");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/app.bsky.unspecced.getPopular")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
             }
         }
     }
-    pub mod Com {
-        pub mod Atproto {
-            pub mod Admin {
-                pub mod Defs {
-                    #[doc = ""]
-                    pub struct RepoView {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub related_records: Vec<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub moderation: Moderation,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub invited_by: crate::Lexicon::Com::Atproto::Server::Defs::InviteCode,
-                        #[doc = "format: Handle"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub handle: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub email: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        pub indexed_at: String,
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+    pub mod com {
+        #[allow(unused_imports)]
+        use super::lexicon;
+        pub mod atproto {
+            #[allow(unused_imports)]
+            use super::lexicon;
+            pub mod admin {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ActionReversal {
+                        pub created_by: String,
+                        pub created_at: String,
+                        pub reason: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct VideoDetails {
+                        pub width: i64,
+                        pub height: i64,
+                        pub length: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RepoRef {
                         pub did: String,
                     }
-                    #[doc = ""]
-                    pub struct RecordViewDetail {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub blobs: Vec<BlobView>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RecordView {
                         pub repo: RepoView,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo4_value: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "format: Cid"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub cid: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub moderation: ModerationDetail,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                        pub value: String,
+                        pub blob_cids: Vec<String>,
                         pub indexed_at: String,
+                        pub cid: String,
+                        pub moderation: Moderation,
+                        pub uri: String,
                     }
-                    #[doc = ""]
-                    pub enum ActionViewDetailsubjectType {
-                        RepoView(Box<RepoView>),
-                        RecordView(Box<RecordView>),
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RepoView {
+                        pub related_records: Vec<String>,
+                        pub indexed_at: String,
+                        pub moderation: Moderation,
+                        pub email: String,
+                        pub invited_by: lexicon::com::atproto::server::defs::InviteCode,
+                        pub handle: String,
+                        pub did: String,
                     }
-                    pub struct ActionViewDetail {
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        pub created_by: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub create_label_vals: Vec<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub reason: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub reversal: ActionReversal,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub created_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub id: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub action: ActionType,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub subject_blobs: Vec<BlobView>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub negate_label_vals: Vec<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub resolved_reports: Vec<ReportView>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub subject: ActionViewDetailsubjectType,
-                    }
-                    #[doc = ""]
-                    pub enum ReportViewsubjectType {
-                        RepoRef(Box<RepoRef>),
-                        StrongRefMain,
-                    }
-                    pub struct ReportView {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub id: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub subject: ReportViewsubjectType,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub reason: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        pub created_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub resolved_by_action_ids: Vec<i64>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub reason_type: crate::Lexicon::Com::Atproto::Moderation::Defs::ReasonType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        pub reported_by: String,
-                    }
-                    pub enum ActionType {
-                        Takedown,
-                        Flag,
-                        Acknowledge,
-                    }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct ActionViewCurrent {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub action: ActionType,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub id: i64,
+                        pub action: ActionType,
                     }
-                    #[doc = ""]
-                    pub enum ReportViewDetailsubjectType {
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ImageDetails {
+                        pub width: i64,
+                        pub height: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ModerationDetail {
+                        pub current_action: ActionViewCurrent,
+                        pub reports: Vec<ReportView>,
+                        pub actions: Vec<ActionView>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
                         RepoView(Box<RepoView>),
                         RecordView(Box<RecordView>),
                     }
-                    pub struct ReportViewDetail {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub reason_type: crate::Lexicon::Com::Atproto::Moderation::Defs::ReasonType,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        #[doc = "required: true"]
-                        pub reported_by: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        pub created_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub id: i64,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ActionViewDetail {
                         pub reason: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub subject: ReportViewDetailsubjectType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub resolved_by_actions:
-                            Vec<crate::Lexicon::Com::Atproto::Admin::Defs::ActionView>,
+                        pub created_at: String,
+                        pub subject: SubjectType,
+                        pub create_label_vals: Vec<String>,
+                        pub resolved_reports: Vec<ReportView>,
+                        pub created_by: String,
+                        pub action: ActionType,
+                        pub id: i64,
+                        pub reversal: ActionReversal,
+                        pub subject_blobs: Vec<BlobView>,
+                        pub negate_label_vals: Vec<String>,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RecordViewDetail {
+                        pub blobs: Vec<BlobView>,
+                        pub value: String,
+                        pub uri: String,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub cid: String,
+                        pub indexed_at: String,
+                        pub repo: RepoView,
+                        pub moderation: ModerationDetail,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Moderation {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub current_action: ActionViewCurrent,
                     }
-                    #[doc = ""]
-                    pub struct ImageDetails {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub height: i64,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub width: i64,
-                    }
-                    #[doc = ""]
-                    pub struct RecordView {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
-                        pub indexed_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub moderation: Moderation,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub repo: RepoView,
-                        #[doc = "format: Cid"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub cid: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub blob_cids: Vec<String>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo4_value: String,
-                    }
-                    #[doc = ""]
-                    pub enum BlobViewdetailsType {
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum DetailsType {
                         ImageDetails(Box<ImageDetails>),
                         VideoDetails(Box<VideoDetails>),
                     }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct BlobView {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub moderation: Moderation,
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        pub created_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Cid"]
                         pub cid: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub mime_type: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                        pub details: DetailsType,
                         pub size: i64,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub details: BlobViewdetailsType,
-                    }
-                    #[doc = ""]
-                    pub struct ActionReversal {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
+                        pub mime_type: String,
+                        pub moderation: Moderation,
                         pub created_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        pub created_by: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub reason: String,
                     }
-                    #[doc = ""]
-                    pub enum ActionViewsubjectType {
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct RepoViewDetail {
+                        pub email: String,
+                        pub moderation: ModerationDetail,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
+                        pub invited_by: lexicon::com::atproto::server::defs::InviteCode,
+                        pub invites: Vec<lexicon::com::atproto::server::defs::InviteCode>,
+                        pub related_records: Vec<String>,
+                        pub handle: String,
+                        pub indexed_at: String,
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
                         RepoRef(Box<RepoRef>),
                         StrongRefMain,
                     }
-                    pub struct ActionView {
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        pub created_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub id: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub subject: ActionViewsubjectType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub action: ActionType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub create_label_vals: Vec<String>,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub negate_label_vals: Vec<String>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReportView {
+                        pub subject: SubjectType,
+                        pub reported_by: String,
+                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
                         pub reason: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        pub created_by: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub subject_blob_cids: Vec<String>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub resolved_report_ids: Vec<i64>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub id: i64,
+                        pub created_at: String,
+                        pub resolved_by_action_ids: Vec<i64>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
+                        RepoRef(Box<RepoRef>),
+                        StrongRefMain,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ActionView {
+                        pub create_label_vals: Vec<String>,
+                        pub negate_label_vals: Vec<String>,
                         pub reversal: ActionReversal,
+                        pub resolved_report_ids: Vec<i64>,
+                        pub reason: String,
+                        pub created_at: String,
+                        pub created_by: String,
+                        pub action: ActionType,
+                        pub id: i64,
+                        pub subject_blob_cids: Vec<String>,
+                        pub subject: SubjectType,
                     }
-                    #[doc = ""]
-                    pub struct RepoRef {
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub did: String,
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
+                        RepoView(Box<RepoView>),
+                        RecordView(Box<RecordView>),
                     }
-                    #[doc = ""]
-                    pub struct VideoDetails {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub height: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub width: i64,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub length: i64,
-                    }
-                    #[doc = ""]
-                    pub struct ModerationDetail {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub reports: Vec<ReportView>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub current_action: ActionViewCurrent,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub actions: Vec<ActionView>,
-                    }
-                    #[doc = ""]
-                    pub struct RepoViewDetail {
-                        #[doc = "format: Handle"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub handle: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub related_records: Vec<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub invited_by: crate::Lexicon::Com::Atproto::Server::Defs::InviteCode,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub invites: Vec<crate::Lexicon::Com::Atproto::Server::Defs::InviteCode>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub moderation: ModerationDetail,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub indexed_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub email: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        pub did: String,
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct ReportViewDetail {
+                        pub resolved_by_actions:
+                            Vec<lexicon::com::atproto::admin::defs::ActionView>,
+                        pub created_at: String,
+                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
+                        pub id: i64,
+                        pub subject: SubjectType,
+                        pub reason: String,
+                        pub reported_by: String,
                     }
                 }
-                pub mod DisableInviteCodes {
+                pub mod disable_invite_codes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Disable some set of codes and/or all codes associated with a set of users\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/disableInviteCodes",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.disableInviteCodes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod GetInviteCodes {
-                    #[doc = ""]
+                pub mod get_invite_codes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub codes: Vec<lexicon::com::atproto::server::defs::InviteCode>,
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub codes: Vec<crate::Lexicon::Com::Atproto::Server::Defs::InviteCode>,
                     }
                     #[doc = "Description: \"Admin view of invite codes\""]
-                    pub fn main(cursor: String, sort: String, limit: i64) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/admin/getInviteCodes");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getInviteCodes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetModerationAction {
+                pub mod get_moderation_action {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"View details about a moderation action.\""]
                     pub fn main(
-                        id: i64,
-                    ) -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::ActionViewDetail>
+                        token: &String,
+                    ) -> Result<lexicon::com::atproto::admin::defs::ActionViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
-                        client.get(
-                            "http://localhost:8080/xrpc/com/atproto/admin/getModerationAction",
-                        );
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getModerationAction")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::ActionViewDetail>();
                     }
                 }
-                pub mod GetModerationActions {
-                    #[doc = ""]
+                pub mod get_moderation_actions {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub actions: Vec<lexicon::com::atproto::admin::defs::ActionView>,
                         pub cursor: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub actions: Vec<crate::Lexicon::Com::Atproto::Admin::Defs::ActionView>,
                     }
                     #[doc = "Description: \"List moderation actions related to a subject.\""]
-                    pub fn main(limit: i64, cursor: String, subject: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get(
-                            "http://localhost:8080/xrpc/com/atproto/admin/getModerationActions",
-                        );
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getModerationActions")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetModerationReport {
+                pub mod get_moderation_report {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"View details about a moderation report.\""]
                     pub fn main(
-                        id: i64,
-                    ) -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::ReportViewDetail>
+                        token: &String,
+                    ) -> Result<lexicon::com::atproto::admin::defs::ReportViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
-                        client.get(
-                            "http://localhost:8080/xrpc/com/atproto/admin/getModerationReport",
-                        );
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getModerationReport")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::ReportViewDetail>();
                     }
                 }
-                pub mod GetModerationReports {
-                    #[doc = ""]
+                pub mod get_moderation_reports {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub reports: Vec<lexicon::com::atproto::admin::defs::ReportView>,
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub reports: Vec<crate::Lexicon::Com::Atproto::Admin::Defs::ReportView>,
                     }
                     #[doc = "Description: \"List moderation reports related to a subject.\""]
-                    pub fn main(
-                        resolved: bool,
-                        limit: i64,
-                        subject: String,
-                        cursor: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get(
-                            "http://localhost:8080/xrpc/com/atproto/admin/getModerationReports",
-                        );
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getModerationReports")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetRecord {
+                pub mod get_record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"View details about a record.\""]
                     pub fn main(
-                        cid: String,
-                        uri: String,
-                    ) -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::RecordViewDetail>
+                        token: &String,
+                    ) -> Result<lexicon::com::atproto::admin::defs::RecordViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/admin/getRecord");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::RecordViewDetail>();
                     }
                 }
-                pub mod GetRepo {
+                pub mod get_repo {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"View details about a repository.\""]
                     pub fn main(
-                        did: String,
-                    ) -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::RepoViewDetail>
+                        token: &String,
+                    ) -> Result<lexicon::com::atproto::admin::defs::RepoViewDetail, reqwest::Error>
                     {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/admin/getRepo");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.getRepo")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::RepoViewDetail>();
                     }
                 }
-                pub mod ResolveModerationReports {
+                pub mod resolve_moderation_reports {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Resolve moderation reports by an action.\""]
-                    pub fn main() -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::ActionView> {
+                    pub fn main(
+                        token: &String,
+                    ) -> Option<lexicon::com::atproto::admin::defs::ActionView>
+                    {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/resolveModerationReports",
-                        );
-                        return None;
+                        return client . post ("http://bsky.social/xrpc/com.atproto.admin.resolveModerationReports") . header ("Authorization" , token) . send () ? . json :: < lexicon :: com :: atproto :: admin :: defs :: ActionView > () ;
                     }
                 }
-                pub mod ReverseModerationAction {
+                pub mod reverse_moderation_action {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Reverse a moderation action.\""]
-                    pub fn main() -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::ActionView> {
+                    pub fn main(
+                        token: &String,
+                    ) -> Option<lexicon::com::atproto::admin::defs::ActionView>
+                    {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/reverseModerationAction",
-                        );
-                        return None;
+                        return client
+                            .post(
+                                "http://bsky.social/xrpc/com.atproto.admin.reverseModerationAction",
+                            )
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::ActionView>();
                     }
                 }
-                pub mod SearchRepos {
-                    #[doc = ""]
+                pub mod search_repos {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub repos: Vec<crate::Lexicon::Com::Atproto::Admin::Defs::RepoView>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                        pub repos: Vec<lexicon::com::atproto::admin::defs::RepoView>,
                         pub cursor: String,
                     }
                     #[doc = "Description: \"Find repositories based on a search term.\""]
-                    pub fn main(
-                        term: String,
-                        invited_by: String,
-                        limit: i64,
-                        cursor: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/admin/searchRepos");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.admin.searchRepos")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod TakeModerationAction {
+                pub mod take_moderation_action {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Take a moderation action on a repo.\""]
-                    pub fn main() -> Option<crate::Lexicon::Com::Atproto::Admin::Defs::ActionView> {
+                    pub fn main(
+                        token: &String,
+                    ) -> Option<lexicon::com::atproto::admin::defs::ActionView>
+                    {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/takeModerationAction",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.takeModerationAction")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<lexicon::com::atproto::admin::defs::ActionView>();
                     }
                 }
-                pub mod UpdateAccountEmail {
+                pub mod update_account_email {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Administrative action to update an account's email\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/updateAccountEmail",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.updateAccountEmail")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod UpdateAccountHandle {
+                pub mod update_account_handle {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Administrative action to update an account's handle\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/admin/updateAccountHandle",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.admin.updateAccountHandle")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
-            pub mod Identity {
-                pub mod ResolveHandle {
-                    #[doc = ""]
+            pub mod identity {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod resolve_handle {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
                         pub did: String,
                     }
                     #[doc = "Description: \"Provides the DID of a repo.\""]
-                    pub fn main(handle: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/identity/resolveHandle");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.identity.resolveHandle")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod UpdateHandle {
+                pub mod update_handle {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Updates the handle of the account\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/identity/updateHandle");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.identity.updateHandle")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
-            pub mod Label {
-                pub mod Defs {
-                    #[doc = "Metadata tag on an atproto resource (eg, repo or record)"]
+            pub mod label {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Label {
-                        #[doc = "description: \"DID of the actor who created this label\""]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
                         pub src: String,
-                        #[doc = "required: false"]
-                        #[doc = "description: \"optionally, CID specifying the specific version of 'uri' resource this label applies to\""]
-                        #[doc = "format: Cid"]
-                        #[doc = "nullable: false"]
                         pub cid: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Uri"]
-                        #[doc = "description: \"AT URI of the record, repository (account), or other resource which this label applies to\""]
-                        pub uri: String,
-                        #[doc = "required: false"]
-                        #[doc = "description: \"if true, this is a negation label, overwriting a previous label\""]
-                        #[doc = "nullable: false"]
-                        pub neg: bool,
-                        #[doc = "description: \"timestamp when this label was created\""]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub cts: String,
-                        #[doc = "required: true"]
-                        #[doc = "description: \"the short string name of the value or type of this label\""]
-                        #[doc = "nullable: false"]
                         pub val: String,
+                        pub uri: String,
+                        pub neg: bool,
                     }
                 }
-                pub mod QueryLabels {
-                    #[doc = ""]
+                pub mod query_labels {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
                         pub cursor: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
                     }
                     #[doc = "Description: \"Find labels relevant to the provided URI patterns.\""]
-                    pub fn main(
-                        cursor: String,
-                        uri_patterns: Vec<String>,
-                        limit: i64,
-                        sources: Vec<String>,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/label/queryLabels");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.label.queryLabels")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod SubscribeLabels {
-                    #[doc = ""]
-                    pub struct Labels {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub labels: Vec<crate::Lexicon::Com::Atproto::Label::Defs::Label>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub seq: i64,
-                    }
-                    #[doc = ""]
-                    pub enum Name {
-                        OutdatedCursor,
-                    }
+                pub mod subscribe_labels {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Info {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "known_values: [\"OutdatedCursor\"]"]
-                        pub name: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub message: String,
+                        pub name: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Labels {
+                        pub seq: i64,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
                     }
                 }
             }
-            pub mod Moderation {
-                pub mod CreateReport {
-                    #[doc = ""]
-                    pub enum MainOutputsubjectType {
+            pub mod moderation {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod create_report {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub enum SubjectType {
                         DefsRepoRef,
                         StrongRefMain,
                     }
-                    pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub id: i64,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub subject: MainOutputsubjectType,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
+                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
                         pub reason: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        #[doc = "required: true"]
-                        pub reported_by: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub reason_type: crate::Lexicon::Com::Atproto::Moderation::Defs::ReasonType,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
+                        pub id: i64,
                         pub created_at: String,
+                        pub subject: SubjectType,
+                        pub reported_by: String,
                     }
                     #[doc = "Description: \"Report a repo or a record.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .post("http://localhost:8080/xrpc/com/atproto/moderation/createReport");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.moderation.createReport")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod Defs {
-                    pub enum ReasonType {
-                        ReasonSpam,
-                        ReasonViolation,
-                        ReasonMisleading,
-                        ReasonSexual,
-                        ReasonRude,
-                        ReasonOther,
-                    }
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                 }
             }
-            pub mod Repo {
-                pub mod ApplyWrites {
-                    #[doc = "Description: \"Apply a batch transaction of creates, updates, and deletes.\""]
-                    pub fn main() -> Option<()> {
-                        let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/applyWrites");
-                        return None;
-                    }
-                    #[doc = "Update an existing record."]
-                    pub struct Update {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Nsid"]
-                        pub collection: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub rkey: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo4_value: String,
-                    }
-                    #[doc = "Delete an existing record."]
-                    pub struct Delete {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub rkey: String,
-                        #[doc = "format: Nsid"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub collection: String,
-                    }
-                    #[doc = "Create a new record."]
+            pub mod repo {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod apply_writes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Create {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Nsid"]
-                        #[doc = "required: true"]
-                        pub collection: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub rkey: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo4_value: String,
+                        pub value: String,
+                        pub collection: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Delete {
+                        pub collection: String,
+                        pub rkey: String,
+                    }
+                    #[doc = "Description: \"Apply a batch transaction of creates, updates, and deletes.\""]
+                    pub fn main(token: &String) -> Option<()> {
+                        let client = reqwest::blocking::Client::new();
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.applyWrites")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Update {
+                        pub rkey: String,
+                        pub value: String,
+                        pub collection: String,
                     }
                 }
-                pub mod CreateRecord {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Cid"]
-                        pub cid: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                pub mod create_record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub uri: String,
+                        pub cid: String,
                     }
                     #[doc = "Description: \"Create a new record.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/createRecord");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.createRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod DeleteRecord {
+                pub mod delete_record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Delete a record, or ensure it doesn't exist.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/deleteRecord");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.deleteRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod DescribeRepo {
-                    #[doc = ""]
+                pub mod describe_repo {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        pub did: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub todo4_didDoc: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub handle_is_correct: bool,
-                        #[doc = "format: Handle"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub handle: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub collections: Vec<String>,
+                        pub did: String,
+                        pub handle_is_correct: bool,
+                        pub didDoc: String,
                     }
                     #[doc = "Description: \"Get information about the repo, including the list of collections.\""]
-                    pub fn main(repo: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/repo/describeRepo");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.repo.describeRepo")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetRecord {
-                    #[doc = ""]
+                pub mod get_record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Cid"]
-                        #[doc = "required: false"]
                         pub cid: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
                         pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub todo4_value: String,
+                        pub value: String,
                     }
                     #[doc = "Description: \"Get a record.\""]
-                    pub fn main(
-                        cid: String,
-                        collection: String,
-                        repo: String,
-                        rkey: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/repo/getRecord");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.repo.getRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod ListRecords {
-                    #[doc = ""]
+                pub mod list_records {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Record {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Cid"]
                         pub cid: String,
-                        #[doc = "format: AtUri"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                        pub value: String,
                         pub uri: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub todo4_value: String,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub records: Vec<Record>,
+                        pub cursor: String,
                     }
                     #[doc = "Description: \"List a range of records in a collection.\""]
-                    pub fn main(
-                        collection: String,
-                        reverse: bool,
-                        repo: String,
-                        rkey_end: String,
-                        limit: i64,
-                        cursor: String,
-                        rkey_start: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/repo/listRecords");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.repo.listRecords")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod PutRecord {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Cid"]
-                        #[doc = "required: true"]
+                pub mod put_record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub cid: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: AtUri"]
                         pub uri: String,
                     }
                     #[doc = "Description: \"Write a record, creating or updating it as needed.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/putRecord");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.putRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod StrongRef {
-                    #[doc = ""]
+                pub mod strong_ref {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Main {
-                        #[doc = "format: AtUri"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub uri: String,
-                        #[doc = "format: Cid"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub cid: String,
                     }
                 }
-                pub mod UploadBlob {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                pub mod upload_blob {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub blob: String,
                     }
                     #[doc = "Description: \"Upload a new blob to be added to repo in a later request.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/repo/uploadBlob");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.repo.uploadBlob")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
             }
-            pub mod Server {
-                pub mod CreateAccount {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+            pub mod server {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod create_account {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub refresh_jwt: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub access_jwt: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Handle"]
-                        pub handle: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
                         pub did: String,
+                        pub access_jwt: String,
+                        pub handle: String,
                     }
                     #[doc = "Description: \"Create an account.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/createAccount");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createAccount")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod CreateAppPassword {
-                    #[doc = ""]
+                pub mod create_app_password {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct AppPassword {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub name: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub password: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
                         pub created_at: String,
+                        pub password: String,
+                        pub name: String,
                     }
                     #[doc = "Description: \"Create an app-specific password.\""]
-                    pub fn main() -> Option<AppPassword> {
+                    pub fn main(token: &String) -> Option<AppPassword> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/createAppPassword",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createAppPassword")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<AppPassword>();
                     }
                 }
-                pub mod CreateInviteCode {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                pub mod create_invite_code {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub code: String,
                     }
                     #[doc = "Description: \"Create an invite code.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .post("http://localhost:8080/xrpc/com/atproto/server/createInviteCode");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createInviteCode")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod CreateInviteCodes {
-                    #[doc = ""]
-                    pub struct AccountCodes {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub account: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub codes: Vec<String>,
-                    }
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                pub mod create_invite_codes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub codes: Vec<AccountCodes>,
                     }
                     #[doc = "Description: \"Create an invite code.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/createInviteCodes",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createInviteCodes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct AccountCodes {
+                        pub account: String,
+                        pub codes: Vec<String>,
                     }
                 }
-                pub mod CreateSession {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
+                pub mod create_session {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub email: String,
-                        #[doc = "format: Handle"]
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub handle: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub access_jwt: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub refresh_jwt: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
+                        pub handle: String,
                         pub did: String,
                     }
                     #[doc = "Description: \"Create an authentication session.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/createSession");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.createSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod Defs {
-                    #[doc = ""]
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct InviteCodeUse {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        #[doc = "required: true"]
                         pub used_by: String,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub used_at: String,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct InviteCode {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub disabled: bool,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub code: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub available: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub created_by: String,
-                        #[doc = "required: true"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        pub created_at: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub for_account: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
+                        pub disabled: bool,
+                        pub code: String,
+                        pub created_by: String,
+                        pub available: i64,
                         pub uses: Vec<InviteCodeUse>,
+                        pub created_at: String,
                     }
                 }
-                pub mod DeleteAccount {
+                pub mod delete_account {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Delete a user account with a token and password.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/deleteAccount");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.deleteAccount")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod DeleteSession {
+                pub mod delete_session {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Delete the current session.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/deleteSession");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.deleteSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod DescribeServer {
-                    #[doc = ""]
-                    pub struct Links {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub privacy_policy: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
-                        pub terms_of_service: String,
-                    }
-                    #[doc = ""]
+                pub mod describe_server {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub available_user_domains: Vec<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: false"]
                         pub invite_code_required: bool,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub links: Links,
+                        pub available_user_domains: Vec<String>,
                     }
                     #[doc = "Description: \"Get a document describing the service's accounts configuration.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/server/describeServer");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.server.describeServer")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Links {
+                        pub privacy_policy: String,
+                        pub terms_of_service: String,
                     }
                 }
-                pub mod GetAccountInviteCodes {
-                    #[doc = ""]
+                pub mod get_account_invite_codes {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub codes: Vec<crate::Lexicon::Com::Atproto::Server::Defs::InviteCode>,
+                        pub codes: Vec<lexicon::com::atproto::server::defs::InviteCode>,
                     }
                     #[doc = "Description: \"Get all invite codes for a given account\""]
-                    pub fn main(include_used: bool, create_available: bool) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get(
-                            "http://localhost:8080/xrpc/com/atproto/server/getAccountInviteCodes",
-                        );
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.server.getAccountInviteCodes")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetSession {
-                    #[doc = ""]
+                pub mod get_session {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "format: Handle"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub handle: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        pub did: String,
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub email: String,
+                        pub did: String,
                     }
                     #[doc = "Description: \"Get information about the current session.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/server/getSession");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.server.getSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod ListAppPasswords {
-                    #[doc = ""]
-                    pub struct AppPassword {
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub created_at: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub name: String,
-                    }
-                    #[doc = ""]
+                pub mod list_app_passwords {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub passwords: Vec<AppPassword>,
                     }
                     #[doc = "Description: \"List all app-specific passwords.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client
-                            .get("http://localhost:8080/xrpc/com/atproto/server/listAppPasswords");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.server.listAppPasswords")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct AppPassword {
+                        pub name: String,
+                        pub created_at: String,
                     }
                 }
-                pub mod RefreshSession {
-                    #[doc = ""]
-                    pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub refresh_jwt: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Handle"]
-                        pub handle: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                pub mod refresh_session {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Main {
                         pub access_jwt: String,
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
+                        pub handle: String,
+                        pub refresh_jwt: String,
                         pub did: String,
                     }
                     #[doc = "Description: \"Refresh an authentication session.\""]
-                    pub fn main() -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Option<main> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/refreshSession");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.refreshSession")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<main>();
                     }
                 }
-                pub mod RequestAccountDelete {
+                pub mod request_account_delete {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Initiate a user account deletion via email.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/requestAccountDelete",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.requestAccountDelete")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod RequestPasswordReset {
+                pub mod request_password_reset {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Initiate a user account password reset via email.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/requestPasswordReset",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.requestPasswordReset")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod ResetPassword {
+                pub mod reset_password {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Reset a user account password using a token.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post("http://localhost:8080/xrpc/com/atproto/server/resetPassword");
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.resetPassword")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod RevokeAppPassword {
+                pub mod revoke_app_password {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Revoke an app-specific password by name.\""]
-                    pub fn main() -> Option<()> {
+                    pub fn main(token: &String) -> Option<()> {
                         let client = reqwest::blocking::Client::new();
-                        client.post(
-                            "http://localhost:8080/xrpc/com/atproto/server/revokeAppPassword",
-                        );
-                        return None;
+                        return client
+                            .post("http://bsky.social/xrpc/com.atproto.server.revokeAppPassword")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
             }
-            pub mod Sync {
-                pub mod GetBlob {
+            pub mod sync {
+                #[allow(unused_imports)]
+                use super::lexicon;
+                pub mod get_blob {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Get a blob associated with a given repo.\""]
-                    pub fn main(did: String, cid: String) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getBlob");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getBlob")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod GetBlocks {
+                pub mod get_blocks {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Gets blocks from a given repo.\""]
-                    pub fn main(did: String, cids: Vec<String>) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getBlocks");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getBlocks")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod GetCheckout {
+                pub mod get_checkout {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Gets the repo state.\""]
-                    pub fn main(commit: String, did: String) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getCheckout");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getCheckout")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod GetCommitPath {
-                    #[doc = ""]
+                pub mod get_commit_path {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
                         pub commits: Vec<String>,
                     }
                     #[doc = "Description: \"Gets the path of repo commits\""]
-                    pub fn main(
-                        earliest: String,
-                        did: String,
-                        latest: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getCommitPath");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getCommitPath")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetHead {
-                    #[doc = ""]
+                pub mod get_head {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Cid"]
-                        #[doc = "required: true"]
                         pub root: String,
                     }
                     #[doc = "Description: \"Gets the current HEAD CID of a repo.\""]
-                    pub fn main(did: String) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getHead");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getHead")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod GetRecord {
+                pub mod get_record {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Gets blocks needed for existence or non-existence of record.\""]
-                    pub fn main(
-                        did: String,
-                        collection: String,
-                        rkey: String,
-                        commit: String,
-                    ) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getRecord");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getRecord")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod GetRepo {
+                pub mod get_repo {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Gets the repo state.\""]
-                    pub fn main(earliest: String, did: String, latest: String) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/getRepo");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.getRepo")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod ListBlobs {
-                    #[doc = ""]
+                pub mod list_blobs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub cids: Vec<String>,
                     }
                     #[doc = "Description: \"List blob cids for some range of commits\""]
-                    pub fn main(
-                        earliest: String,
-                        did: String,
-                        latest: String,
-                    ) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/listBlobs");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.listBlobs")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod ListRepos {
-                    #[doc = ""]
+                pub mod list_repos {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Repo {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        #[doc = "required: true"]
-                        pub did: String,
-                        #[doc = "format: Cid"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub head: String,
+                        pub did: String,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct MainOutput {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
                         pub cursor: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub repos: Vec<Repo>,
                     }
                     #[doc = "Description: \"List dids and root cids of hosted repos\""]
-                    pub fn main(cursor: String, limit: i64) -> Option<MainOutput> {
+                    pub fn main(token: &String) -> Result<MainOutput, reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/listRepos");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.listRepos")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<MainOutput>();
                     }
                 }
-                pub mod NotifyOfUpdate {
+                pub mod notify_of_update {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Notify a crawling service of a recent update. Often when a long break between updates causes the connection with the crawling service to break.\""]
-                    pub fn main(hostname: String) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/notifyOfUpdate");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.notifyOfUpdate")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod RequestCrawl {
+                pub mod request_crawl {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
                     #[doc = "Description: \"Request a service to persistently crawl hosted repos.\""]
-                    pub fn main(hostname: String) -> Option<()> {
+                    pub fn main(token: &String) -> Result<(), reqwest::Error> {
                         let client = reqwest::blocking::Client::new();
-                        client.get("http://localhost:8080/xrpc/com/atproto/sync/requestCrawl");
-                        return None;
+                        return client
+                            .get("http://bsky.social/xrpc/com.atproto.sync.requestCrawl")
+                            .header("Authorization", token)
+                            .send()?
+                            .json::<()>();
                     }
                 }
-                pub mod SubscribeRepos {
-                    #[doc = ""]
-                    pub enum Name {
-                        OutdatedCursor,
-                    }
-                    pub struct Info {
-                        #[doc = "required: false"]
-                        #[doc = "nullable: false"]
-                        pub message: String,
-                        #[doc = "known_values: [\"OutdatedCursor\"]"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub name: String,
-                    }
-                    #[doc = ""]
-                    pub enum Action {
-                        Create,
-                        Update,
-                        Delete,
-                    }
+                pub mod subscribe_repos {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct RepoOp {
-                        #[doc = "nullable: true"]
-                        #[doc = "required: true"]
-                        pub todo3_cid: Option<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "known_values: [\"create\", \"update\", \"delete\"]"]
-                        #[doc = "required: true"]
+                        pub cid: Option<String>,
                         pub action: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub path: String,
                     }
-                    #[doc = ""]
-                    pub struct Commit {
-                        #[doc = "required: true"]
-                        #[doc = "nullable: true"]
-                        pub todo3_prev: Option<String>,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub rebase: bool,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub too_big: bool,
-                        #[doc = "nullable: false"]
-                        #[doc = "description: \"CAR file containing relevant blocks\""]
-                        #[doc = "required: true"]
-                        pub todo5_blocks: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub todo3_commit: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub ops: Vec<RepoOp>,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub blobs: Vec<String>,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
-                        pub time: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub seq: i64,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        pub repo: String,
-                    }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Handle {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        #[doc = "format: Did"]
                         pub did: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Handle"]
+                        pub seq: i64,
                         pub handle: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        pub seq: i64,
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
                         pub time: String,
                     }
-                    #[doc = ""]
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Commit {
+                        pub ops: Vec<RepoOp>,
+                        pub blobs: Vec<String>,
+                        pub repo: String,
+                        pub rebase: bool,
+                        pub seq: i64,
+                        pub too_big: bool,
+                        pub blocks: String,
+                        pub time: String,
+                        pub prev: Option<String>,
+                        pub commit: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     pub struct Migrate {
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub seq: i64,
-                        #[doc = "format: Datetime"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub time: String,
-                        #[doc = "nullable: true"]
-                        #[doc = "required: true"]
+                        pub did: String,
                         pub migrate_to: Option<String>,
-                        #[doc = "format: Did"]
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
-                        pub did: String,
-                    }
-                    #[doc = ""]
-                    pub struct Tombstone {
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Datetime"]
-                        #[doc = "required: true"]
-                        pub time: String,
-                        #[doc = "required: true"]
-                        #[doc = "nullable: false"]
-                        #[doc = "format: Did"]
-                        pub did: String,
-                        #[doc = "nullable: false"]
-                        #[doc = "required: true"]
                         pub seq: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Tombstone {
+                        pub seq: i64,
+                        pub did: String,
+                        pub time: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Info {
+                        pub message: String,
+                        pub name: String,
                     }
                 }
             }
