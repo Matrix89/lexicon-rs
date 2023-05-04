@@ -22,5 +22,6 @@ members = [
   "lib/lexicon",
   "lib/codegen",
   "lib/nsid",
-  "lib/test"
+  "lib/test",
+  "lib/xrpc"
 ]
