@@ -16,12 +16,15 @@ fn gen_body(
         namespace.replace("::", ".").replace(".lexicon.", ""),
     );
     quote! {
-        let client = reqwest::blocking::Client::new();
+        /*let client = reqwest::blocking::Client::new();
         return client
             .get(#url)
             .header("Authorization", token)
             .send()?
-            .json::<#output_type>();
+            .json::<#output_type>();*/
+        let query = XrpcQuery::new(#url.to_string())
+        .token(token);
+        query.execute::<#output_type>()
     }
 }
 
@@ -44,7 +47,9 @@ impl CodeGen {
         quote! {
             #output
             #doc
-            pub fn #name(token: &String, #parameters) -> Result<#output_type, reqwest::Error> {
+            use xrpc::error::XrpcError;
+            use xrpc::query::XrpcQuery;
+            pub fn #name(token: &String, #parameters) -> Result<#output_type, XrpcError> {
                 #body
             }
         }

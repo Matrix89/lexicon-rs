@@ -15,6 +15,7 @@ fn main() {
     println!("{:?}", session);
     let token = format!("Bearer {}", session.unwrap().access_jwt);
     let res = get_timeline::main(&token, "".to_owned(), "".to_owned(), 32);
+    println!("{:?}", res);
 
     for post in res.unwrap().feed {
         println!("{:?}", post);
