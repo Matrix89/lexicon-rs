@@ -1,12 +1,9 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{Parameters, UserType, XrpcBody, XrpcQuery, JV};
+use lexicon::lexicon::XrpcQuery;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::{
-    doc_builder::DocBuilder, lex::object::build_ref_target, xrpc::parameters::gen_parameters,
-    CodeGen,
-};
+use crate::{doc_builder::DocBuilder, CodeGen};
 
 fn gen_body(
     name: &str,
@@ -15,12 +12,16 @@ fn gen_body(
     output: &TokenStream,
 ) -> TokenStream {
     let url = format!(
-        "http://bsky.social/xrpc/{}",
+        "https://bsky.social/xrpc/{}",
         namespace.replace("::", ".").replace(".lexicon.", ""),
     );
     quote! {
         let client = reqwest::blocking::Client::new();
-        return client.get(#url).header("Authorization", token).send()?.json::<#output_type>();
+        return client
+            .get(#url)
+            .header("Authorization", token)
+            .send()?
+            .json::<#output_type>();
     }
 }
 
@@ -29,7 +30,7 @@ impl CodeGen {
         let mut doc = DocBuilder::new();
         doc.add_optional_item("Description", &query.description);
 
-        let parameters = gen_parameters(query.parameters.unwrap_or_default());
+        let parameters = self.gen_parameters(query.parameters.unwrap_or_default());
         let (output_type, output) = self.gen_body(
             &format!("{}Output", name.to_case(Case::Pascal)),
             query.output.unwrap_or_default(),

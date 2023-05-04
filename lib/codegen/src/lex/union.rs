@@ -55,7 +55,7 @@ pub fn gen_union(name: &str, refs: Vec<String>) -> (Ident, TokenStream) {
         })
         .collect::<Vec<_>>();
 
-    let enum_name = format_ident!("{}Type", name.to_case(Case::Pascal));
+    let enum_name = format_ident!("{}", name.to_case(Case::Pascal));
     let r#enum = quote! {
        #[derive(Clone, Debug, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
        pub enum #enum_name {

@@ -11,7 +11,7 @@ pub fn gen_ref_variant(name: &String, variant: RefVariant) -> (TokenStream, Opti
             (quote! { #ref_target }, None)
         }
         RefVariant::Union(union) => {
-            let (enum_name, r#enum) = gen_union(name, union.refs);
+            let (enum_name, r#enum) = gen_union(&format!("{}Type", name), union.refs);
             (quote! { #enum_name }, Some(r#enum))
         }
     }

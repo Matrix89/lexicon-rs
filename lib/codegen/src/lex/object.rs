@@ -1,12 +1,11 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{ArrayItem, ObjectField, Primitive, UserType};
+use lexicon::lexicon::{Object, ObjectField};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
-use std::collections::HashMap;
 
 use crate::{doc_builder::DocBuilder, CodeGen};
 
-use super::{array::gen_array, r#ref::gen_ref_variant, string::gen_string, union::gen_union};
+use super::{array::gen_array, r#ref::gen_ref_variant, union::gen_union};
 
 pub fn build_ref_target(r#ref: &str) -> syn::Path {
     let ref_target = if r#ref.starts_with('#') {
@@ -50,56 +49,10 @@ impl CodeGen {
         let mut doc = DocBuilder::new();
 
         let (name, prop_type, additional_code) = match property {
-            ObjectField::Primitive(primitive) => match primitive {
-                Primitive::String(str) => {
-                    doc.add_optional_item("description", &str.description);
-                    doc.add_optional_item("format", &str.format);
-                    doc.add_optional_item("default", &str.default);
-                    doc.add_optional_item("min_length", &str.min_length);
-                    doc.add_optional_item("max_length", &str.max_length);
-                    doc.add_optional_item("min_graphemes", &str.min_graphemes);
-                    doc.add_optional_item("max_graphemes", &str.max_graphemes);
-                    doc.add_optional_item("enum", &str.r#enum);
-                    doc.add_optional_item("const", &str.r#const);
-                    doc.add_optional_item("known_values", &str.known_values);
-
-                    match str.known_values {
-                        Some(ref know_values) => {
-                            let r = gen_string(name, &self.tree, namespace, &str);
-                            let name = gen_field_name(name);
-                            let prop_type = quote! { String };
-                            (name, prop_type, Some(r))
-                        }
-                        None => {
-                            let name = gen_field_name(name);
-                            let prop_type = quote! { String };
-                            (name, prop_type, None)
-                        }
-                    }
-                }
-                Primitive::Boolean(boolean) => {
-                    doc.add_optional_item("description", &boolean.description);
-                    doc.add_optional_item("default", &boolean.default);
-                    doc.add_optional_item("const", &boolean.r#const);
-
-                    let name = gen_field_name(name);
-                    (name, quote! { bool }, None)
-                }
-                Primitive::Integer(int) => {
-                    doc.add_optional_item("description", &int.description);
-                    doc.add_optional_item("default", &int.default);
-                    doc.add_optional_item("minimum", &int.minimum);
-                    doc.add_optional_item("maximum", &int.maximum);
-                    doc.add_optional_item("enum", &int.r#enum);
-                    doc.add_optional_item("const", &int.r#const);
-
-                    let name = gen_field_name(name);
-
-                    (name, quote! { i64 }, None)
-                }
-            },
+            ObjectField::Primitive(primitive) => self.gen_primitive(name, primitive, &mut doc),
             ObjectField::RefVariant(variant) => {
-                let (enum_name, r#enum) = gen_ref_variant(&name, variant);
+                let (enum_name, r#enum) =
+                    gen_ref_variant(&format!("{}{}", object_name, name), variant);
                 let name = gen_field_name(name);
                 (name, enum_name, r#enum)
             }
@@ -120,7 +73,7 @@ impl CodeGen {
             _ => todo!("{:?}", property),
         };
 
-        let prop_type = if is_nullable {
+        let prop_type = if is_nullable || !is_required {
             quote! { Option<#prop_type> }
         } else {
             prop_type
@@ -129,10 +82,14 @@ impl CodeGen {
         doc.add_item("nullable", is_nullable);
         doc.add_item("required", is_required);
 
-        let doc = doc.build();
+        let doc = if self.docs {
+            doc.build()
+        } else {
+            quote! {}
+        };
 
         let property_code = quote! {
-            //#doc
+            #doc
             pub #name: #prop_type,
         };
 
@@ -143,11 +100,12 @@ impl CodeGen {
         &self,
         object_name: &String,
         namespace: &String,
-        description: String,
-        required: Vec<String>,
-        nullable: Vec<String>,
-        properties: HashMap<String, ObjectField>,
+        object: Object,
     ) -> TokenStream {
+        let properties = object.properties.unwrap_or_default();
+        let required = object.required.unwrap_or_default();
+        let nullable = object.nullable.unwrap_or_default();
+
         let mut properties_code = vec![];
         let mut additional_declarations = vec![];
 
@@ -173,6 +131,7 @@ impl CodeGen {
             //#[doc = #description]
             #(#additional_declarations)*
             #[derive(Clone, Debug, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
+            #[serde(rename_all = "camelCase")]
             pub struct #name {
                 #(#properties_code)*
             }

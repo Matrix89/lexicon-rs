@@ -9,27 +9,19 @@ impl CodeGen {
     pub fn gen_body(&self, name: &String, body: XrpcBody) -> (TokenStream, TokenStream) {
         match body.encoding {
             Some(encoding) if encoding.as_str() == "application/json" => {
-                let output_name = format!("{}", name.to_case(Case::Pascal));
+                let name = format!("{}", name.to_case(Case::Pascal));
                 let schema = body.schema.unwrap();
 
                 let code = match schema {
-                    XrpcBodySchema::Object(obj) => self.gen_object(
-                        &output_name,
-                        &"".to_owned(),
-                        obj.description.unwrap_or_else(|| "".to_owned()),
-                        obj.required.unwrap_or_default(),
-                        obj.nullable.unwrap_or_default(),
-                        obj.properties.unwrap_or_default(),
-                    ),
+                    XrpcBodySchema::Object(obj) => self.gen_object(&name, &"".to_owned(), obj),
                     XrpcBodySchema::RefVariant(variant) => {
-                        return (gen_ref_variant(name, variant).0, quote! {})
+                        return (gen_ref_variant(&name, variant).0, quote! {})
                     }
-
                     t => todo!("{:?}", t),
                 };
 
-                let t = format_ident!("{}", name);
-                (quote! {#t}, code)
+                let name = format_ident!("{}", name);
+                (quote! {#name}, code)
             }
             Some(v) => {
                 println!("Unsupported output encoding: {:?}", v);

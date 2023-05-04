@@ -1,4 +1,5 @@
 use convert_case::{Case, Casing};
+use lex::union::gen_union;
 use lexicon::lexicon::UserType;
 use nsid::NSIDNode;
 use proc_macro2::TokenStream;
@@ -10,30 +11,23 @@ pub mod xrpc;
 
 pub struct CodeGen {
     tree: NSIDNode,
+
+    docs: bool,
 }
 
 impl CodeGen {
     pub fn new(tree: NSIDNode) -> Self {
-        Self { tree }
+        Self { tree, docs: false }
     }
 
     fn gen_def(self: &CodeGen, namespace: &String, def: (String, UserType)) -> TokenStream {
-        let name = format_ident!("{}", def.0.to_case(Case::Pascal));
         match def.1 {
-            UserType::Object(obj) => self.gen_object(
-                &def.0,
-                namespace,
-                obj.description.unwrap_or_else(|| "".to_owned()),
-                obj.required.unwrap_or_default(),
-                obj.nullable.unwrap_or_default(),
-                obj.properties.unwrap_or_default(),
-            ),
+            UserType::Object(obj) => self.gen_object(&def.0, namespace, obj),
             UserType::XrpcQuery(query) => self.gen_query(namespace, &def.0, query),
             UserType::XrpcProcedure(proc) => self.gen_procedure(namespace, &def.0, proc),
-            UserType::XrpcSubscription { .. } => quote! {},
-            UserType::Token { .. } => quote! {},
+            UserType::String(str) => gen_union(&def.0, str.known_values.unwrap_or_default()).1,
             _ => {
-                println!("TODO! {:?}", def);
+                println!("Unknown top level UserType: {:?}", def);
                 quote! {}
             }
         }
@@ -74,6 +68,8 @@ impl CodeGen {
                     pub mod #name {
                         #[allow(unused_imports)]
                         use super::lexicon;
+                        #[derive(Debug, Clone, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
+                        pub struct Unimplemented;
                         #(#defs)*
                     }
                 }

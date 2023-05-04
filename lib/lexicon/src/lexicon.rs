@@ -58,6 +58,7 @@ pub enum Primitive {
     Boolean(LexBoolean),
     #[serde(rename = "integer")]
     Integer(LexInteger),
+    #[serde(rename = "string")]
     String(LexString),
 }
 
@@ -79,7 +80,6 @@ pub enum RefVariant {
 #[serde(untagged)]
 pub enum ArrayItem {
     Primitive(Primitive),
-    Ref(Ref),
     RefVariant(RefVariant),
     Unknown(JV), // TODO
 }
@@ -181,13 +181,34 @@ pub struct Enum {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Record {
+    description: Option<String>,
+    key: Option<String>,
+    record: Box<UserType>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Token {
+    description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Bytes {
+    description: Option<String>,
+    min_length: Option<u64>,
+    max_length: Option<u64>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct CidLink {
+    description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum UserType {
-    Record {
-        description: Option<String>,
-        key: Option<String>,
-        record: Box<UserType>,
-    },
+    Record(Record),
+
     #[serde(rename = "query")]
     XrpcQuery(XrpcQuery),
     #[serde(rename = "procedure")]
@@ -198,46 +219,14 @@ pub enum UserType {
     Blob(Blob),
 
     Array(Array),
-    Token {
-        description: Option<String>,
-    },
+    Token(Token),
     Object(Object),
-    Union(RefVariant),
-    Ref(Ref),
-    Bytes {
-        description: Option<String>,
-        min_length: Option<u64>,
-        max_length: Option<u64>,
-    },
-    CidLink {
-        description: Option<String>,
-    },
 
-    Primitive(Primitive),
+    String(LexString),
 
-    Enum(Enum),
+    Bytes(Bytes),
+    CidLink(CidLink),
 
     #[serde(other)]
     Unknown,
-}
-
-// https://atproto.com/specs/lexicon#interface
-#[derive(Serialize, Deserialize, Debug)]
-pub struct LexiconDoc {
-    pub lexicon: u8,
-    pub id: String,
-
-    pub revision: Option<u8>,
-    pub description: Option<String>,
-
-    pub defs: HashMap<String, UserType>,
-}
-
-impl FromStr for LexiconDoc {
-    type Err = serde_path_to_error::Error<serde_json::Error>;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let deserializer = &mut serde_json::Deserializer::from_str(s);
-        serde_path_to_error::deserialize(deserializer)
-    }
 }

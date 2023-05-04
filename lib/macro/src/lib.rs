@@ -1,11 +1,10 @@
 use codegen::CodeGen;
-use lexicon::lexicon::LexiconDoc;
 use nsid::NSIDNode;
 use proc_macro::TokenStream;
 use std::{fs, str::FromStr};
 use walkdir::WalkDir;
 
-#[proc_macro]
+/*#[proc_macro]
 pub fn lexicon(_items: TokenStream) -> TokenStream {
     let lexicons = WalkDir::new("/home/matrix89/dev/atproto/lexicons")
         .into_iter()
@@ -32,4 +31,4 @@ pub fn lexicon(_items: TokenStream) -> TokenStream {
     let gen = CodeGen::new(root.clone());
 
     gen.gen(root, &"".to_owned()).into()
-}
+}*/

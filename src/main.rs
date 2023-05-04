@@ -1,12 +1,12 @@
 use codegen::CodeGen;
-use lexicon::lexicon::LexiconDoc;
+use lexicon::doc::LexiconDoc;
 use nsid::NSIDNode;
 use rust_format::{Formatter, RustFmt};
 use std::{fs, str::FromStr};
 use walkdir::WalkDir;
 
 fn main() {
-    let lexicons = WalkDir::new("/home/matrix89/dev/atproto/lexicons")
+    let lexicons = WalkDir::new("/home/matrix89/Development/atproto/lexicons")
         .into_iter()
         .filter_map(|f| f.ok())
         .filter(|e| e.file_type().is_file())

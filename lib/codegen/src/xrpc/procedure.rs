@@ -3,7 +3,7 @@ use lexicon::lexicon::{Parameters, XrpcBody, XrpcProcedure, JV};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::{doc_builder::DocBuilder, xrpc::parameters::gen_parameters, CodeGen};
+use crate::{doc_builder::DocBuilder, CodeGen};
 
 fn gen_body(
     name: &str,
@@ -12,12 +12,20 @@ fn gen_body(
     output: &TokenStream,
 ) -> TokenStream {
     let url = format!(
-        "http://bsky.social/xrpc/{}",
+        "https://bsky.social/xrpc/{}",
         namespace.replace("::", ".").replace(".lexicon.", ""),
     );
+
+    let input = format_ident!("input");
+
     quote! {
         let client = reqwest::blocking::Client::new();
-        return client.post(#url).header("Authorization", token).send()?.json::<#output_type>();
+        return client
+            .post(#url)
+            .header("Authorization", token)
+            .json(&#input)
+            .send()?
+            .json::<#output_type>();
     }
 }
 
@@ -28,12 +36,20 @@ impl CodeGen {
         name: &String,
         proc: XrpcProcedure,
     ) -> TokenStream {
-        println!("Generating query: {} {}", namespace, name);
         let mut doc = DocBuilder::new();
         doc.add_optional_item("Description", &proc.description);
 
-        let parameters = gen_parameters(proc.parameters.unwrap_or_default());
-        let (output_type, output) = self.gen_body(&name, proc.output.unwrap_or_default());
+        let parameters = self.gen_parameters(proc.parameters.unwrap_or_default());
+        let (output_type, output) = self.gen_body(
+            &format!("{}Output", name.to_case(Case::Pascal)),
+            proc.output.unwrap_or_default(),
+        );
+
+        let (input_type, input) = self.gen_body(
+            &format!("{}Input", name.to_case(Case::Pascal)),
+            proc.input.unwrap_or_default(),
+        );
+
         let body = gen_body(&name, &namespace, &output_type, &output);
 
         let name = format_ident!("{}", name.to_case(Case::Snake));
@@ -42,8 +58,9 @@ impl CodeGen {
 
         quote! {
             #output
+            #input
             #doc
-            pub fn #name(token: &String, #parameters) -> Option<#output_type> {
+            pub fn #name(token: &String, input: #input_type, #parameters) -> Result<#output_type, reqwest::Error> {
                 #body
             }
         }
