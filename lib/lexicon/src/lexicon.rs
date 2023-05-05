@@ -1,6 +1,9 @@
-use std::{collections::HashMap, str::FromStr};
+use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{MapAccess, Visitor},
+    Deserialize, Deserializer, Serialize,
+};
 use serde_json::Value as JSONValue;
 
 pub type XrpcParameter = String;
@@ -22,6 +25,7 @@ pub enum StringFormat {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct LexString {
     pub format: Option<StringFormat>,
     pub description: Option<String>,
@@ -55,6 +59,7 @@ pub struct LexInteger {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum Primitive {
+    #[serde(rename = "boolean")]
     Boolean(LexBoolean),
     #[serde(rename = "integer")]
     Integer(LexInteger),
@@ -158,13 +163,54 @@ pub struct Blob {
     pub max_size: Option<u64>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(untagged)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ObjectField {
     Primitive(Primitive),
     RefVariant(RefVariant),
     Array(Array),
     Blob(Blob),
+    Unknown,
+}
+
+impl<'de> Deserialize<'de> for ObjectField {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let object: serde_json::Value = Deserialize::deserialize(deserializer)?;
+        let r#type = object.get("type").ok_or_else(|| {
+            serde::de::Error::custom("missing `type` field in object field definition")
+        })?;
+        let r#type = r#type
+            .as_str()
+            .ok_or_else(|| serde::de::Error::custom("`type` field is not a string"))?;
+        match r#type {
+            "string" | "integer" | "boolean" => Ok(ObjectField::Primitive(
+                serde_json::from_value(object).map_err(|_| {
+                    serde::de::Error::custom(
+                        "failed to deserialize primitive object field definition",
+                    )
+                })?,
+            )),
+            "ref" | "union" => Ok(ObjectField::RefVariant(
+                serde_json::from_value(object).map_err(|_| {
+                    serde::de::Error::custom("failed to deserialize ref object field definition")
+                })?,
+            )),
+            "array" => Ok(ObjectField::Array(serde_json::from_value(object).map_err(
+                |_| serde::de::Error::custom("failed to deserialize array object field definition"),
+            )?)),
+            "blob" => Ok(ObjectField::Blob(serde_json::from_value(object).map_err(
+                |_| serde::de::Error::custom("failed to deserialize blob object field definition"),
+            )?)),
+            "unknown" => Ok(ObjectField::Unknown),
+            "cid-link" | "bytes" => {
+                println!("cid-link object field type");
+                Ok(ObjectField::Unknown)
+            }
+            v => unimplemented!("Unknown object field type: \"{}\"", v),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

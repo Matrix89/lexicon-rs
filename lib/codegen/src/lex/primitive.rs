@@ -11,6 +11,7 @@ impl CodeGen {
         &self,
         name: &String,
         primitive: Primitive,
+        ns: &String,
         doc: &mut DocBuilder,
     ) -> (Ident, TokenStream, Option<TokenStream>) {
         match primitive {
@@ -28,7 +29,7 @@ impl CodeGen {
 
                 match str.known_values {
                     Some(ref know_values) => {
-                        let (union_name, code) = gen_union(name, know_values.clone());
+                        let (union_name, code) = gen_union(name, know_values.clone(), ns);
                         let name = gen_field_name(name);
                         let prop_type = quote! { #union_name };
                         (name, prop_type, Some(code))

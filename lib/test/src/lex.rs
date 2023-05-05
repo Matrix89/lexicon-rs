@@ -24,9 +24,9 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct ViewerState {
                         pub blocked_by: Option<bool>,
-                        pub blocking: Option<String>,
-                        pub muted: Option<bool>,
                         pub followed_by: Option<String>,
+                        pub muted: Option<bool>,
+                        pub blocking: Option<String>,
                         pub following: Option<String>,
                     }
                     #[derive(
@@ -35,43 +35,43 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct ProfileViewBasic {
                         pub avatar: Option<String>,
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
                         pub did: String,
-                        pub display_name: Option<String>,
                         pub handle: String,
                         pub viewer: Option<ViewerState>,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ProfileView {
-                        pub did: String,
-                        pub description: Option<String>,
-                        pub handle: String,
-                        pub avatar: Option<String>,
-                        pub viewer: Option<ViewerState>,
                         pub display_name: Option<String>,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
-                        pub indexed_at: Option<String>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct ProfileViewDetailed {
-                        pub follows_count: Option<i64>,
-                        pub posts_count: Option<i64>,
-                        pub handle: String,
                         pub banner: Option<String>,
                         pub description: Option<String>,
-                        pub avatar: Option<String>,
-                        pub followers_count: Option<i64>,
-                        pub did: String,
+                        pub follows_count: Option<i64>,
                         pub indexed_at: Option<String>,
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub posts_count: Option<i64>,
+                        pub did: String,
                         pub viewer: Option<ViewerState>,
+                        pub handle: String,
+                        pub display_name: Option<String>,
+                        pub followers_count: Option<i64>,
+                        pub avatar: Option<String>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ProfileView {
+                        pub handle: String,
+                        pub description: Option<String>,
+                        pub indexed_at: Option<String>,
                         pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
                         pub display_name: Option<String>,
+                        pub avatar: Option<String>,
+                        pub did: String,
+                        pub viewer: Option<ViewerState>,
                     }
                 }
                 pub mod get_profile {
@@ -91,6 +91,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.actor.getProfile".to_string(),
                         )
+                        .param("actor".to_string(), actor.to_string())
                         .token(token);
                         query.execute::<lexicon::app::bsky::actor::defs::ProfileViewDetailed>()
                     }
@@ -134,8 +135,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub cursor: Option<String>,
                         pub actors: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
+                        pub cursor: Option<String>,
                     }
                     #[doc = "Description: \"Get a list of actors suggested for following. Used in discovery UIs.\""]
                     use xrpc::error::XrpcError;
@@ -148,6 +149,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.actor.getSuggestions".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -187,6 +190,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.actor.searchActors".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("term".to_string(), term.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -217,6 +223,8 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/app.bsky.actor.searchActorsTypeahead"
                                 .to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("term".to_string(), term.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -236,11 +244,28 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
-                    pub struct External {
+                    pub struct Main {
+                        pub external: External,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ViewExternal {
+                        pub thumb: Option<String>,
+                        pub uri: String,
                         pub title: String,
                         pub description: String,
-                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct External {
+                        pub description: String,
                         pub thumb: Option<String>,
+                        pub uri: String,
+                        pub title: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -248,23 +273,6 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct View {
                         pub external: ViewExternal,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ViewExternal {
-                        pub description: String,
-                        pub thumb: Option<String>,
-                        pub title: String,
-                        pub uri: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Main {
-                        pub external: External,
                     }
                 }
                 pub mod images {
@@ -293,17 +301,17 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
-                    pub struct ViewImage {
-                        pub fullsize: String,
-                        pub thumb: String,
-                        pub alt: String,
+                    pub struct Main {
+                        pub images: Vec<Image>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
-                    pub struct Main {
-                        pub images: Vec<Image>,
+                    pub struct ViewImage {
+                        pub thumb: String,
+                        pub fullsize: String,
+                        pub alt: String,
                     }
                 }
                 pub mod record {
@@ -316,30 +324,15 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum EmbedsType {
-                        ImagesView,
-                        ExternalView,
-                        RecordView,
-                        RecordWithMediaView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ViewRecord {
-                        pub embeds: Option<Vec<EmbedsType>>,
-                        pub indexed_at: String,
-                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
-                        pub cid: String,
-                        pub uri: String,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
-                        pub value: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
                     #[serde(rename_all = "camelCase")]
                     pub struct ViewBlocked {
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ViewNotFound {
                         pub uri: String,
                     }
                     #[derive(
@@ -352,16 +345,13 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ViewNotFound {
-                        pub uri: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
+                    #[serde(tag = "$type")]
                     pub enum ViewrecordType {
+                        #[serde(alias = "app.bsky.embed.record#viewRecord")]
                         ViewRecord(Box<ViewRecord>),
+                        #[serde(alias = "app.bsky.embed.record#viewNotFound")]
                         ViewNotFound(Box<ViewNotFound>),
+                        #[serde(alias = "app.bsky.embed.record#viewBlocked")]
                         ViewBlocked(Box<ViewBlocked>),
                     }
                     #[derive(
@@ -370,6 +360,35 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct View {
                         pub record: ViewrecordType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum EmbedsType {
+                        #[serde(alias = "app.bsky.embed.images#view")]
+                        ImagesView(Box<lexicon::app::bsky::embed::images::View>),
+                        #[serde(alias = "app.bsky.embed.external#view")]
+                        ExternalView(Box<lexicon::app::bsky::embed::external::View>),
+                        #[serde(alias = "app.bsky.embed.record#view")]
+                        RecordView(Box<lexicon::app::bsky::embed::record::View>),
+                        #[serde(alias = "app.bsky.embed.recordWithMedia#view")]
+                        RecordWithMediaView(
+                            Box<lexicon::app::bsky::embed::record_with_media::View>,
+                        ),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ViewRecord {
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub cid: String,
+                        pub embeds: Option<Vec<EmbedsType>>,
+                        pub indexed_at: String,
+                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub uri: String,
+                        pub value: ::serde_json::Value,
                     }
                 }
                 pub mod record_with_media {
@@ -382,32 +401,38 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum MainmediaType {
-                        ImagesMain,
-                        ExternalMain,
+                        #[serde(alias = "app.bsky.embed.images")]
+                        Images(Box<lexicon::app::bsky::embed::images::Main>),
+                        #[serde(alias = "app.bsky.embed.external")]
+                        External(Box<lexicon::app::bsky::embed::external::Main>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Main {
-                        pub record: lexicon::app::bsky::embed::record::Main,
                         pub media: MainmediaType,
+                        pub record: lexicon::app::bsky::embed::record::Main,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum ViewmediaType {
-                        ImagesView,
-                        ExternalView,
+                        #[serde(alias = "app.bsky.embed.images#view")]
+                        ImagesView(Box<lexicon::app::bsky::embed::images::View>),
+                        #[serde(alias = "app.bsky.embed.external#view")]
+                        ExternalView(Box<lexicon::app::bsky::embed::external::View>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct View {
-                        pub media: ViewmediaType,
                         pub record: lexicon::app::bsky::embed::record::View,
+                        pub media: ViewmediaType,
                     }
                 }
             }
@@ -424,17 +449,57 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ReplyRef {
+                        pub parent: lexicon::app::bsky::feed::defs::PostView,
+                        pub root: lexicon::app::bsky::feed::defs::PostView,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ReasonRepost {
+                        pub indexed_at: String,
+                        pub by: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct BlockedPost {
+                        pub blocked: bool,
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct NotFoundPost {
+                        pub not_found: bool,
+                        pub uri: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
                     pub enum ThreadViewPostparentType {
+                        #[serde(alias = "app.bsky.feed.defs#threadViewPost")]
                         ThreadViewPost(Box<ThreadViewPost>),
+                        #[serde(alias = "app.bsky.feed.defs#notFoundPost")]
                         NotFoundPost(Box<NotFoundPost>),
+                        #[serde(alias = "app.bsky.feed.defs#blockedPost")]
                         BlockedPost(Box<BlockedPost>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum RepliesType {
+                        #[serde(alias = "app.bsky.feed.defs#threadViewPost")]
                         ThreadViewPost(Box<ThreadViewPost>),
+                        #[serde(alias = "app.bsky.feed.defs#notFoundPost")]
                         NotFoundPost(Box<NotFoundPost>),
+                        #[serde(alias = "app.bsky.feed.defs#blockedPost")]
                         BlockedPost(Box<BlockedPost>),
                     }
                     #[derive(
@@ -443,8 +508,58 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct ThreadViewPost {
                         pub parent: Option<ThreadViewPostparentType>,
-                        pub post: PostView,
                         pub replies: Option<Vec<RepliesType>>,
+                        pub post: PostView,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum FeedViewPostreasonType {
+                        #[serde(alias = "app.bsky.feed.defs#reasonRepost")]
+                        ReasonRepost(Box<ReasonRepost>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct FeedViewPost {
+                        pub post: lexicon::app::bsky::feed::defs::PostView,
+                        pub reason: Option<FeedViewPostreasonType>,
+                        pub reply: Option<ReplyRef>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum PostViewembedType {
+                        #[serde(alias = "app.bsky.embed.images#view")]
+                        ImagesView(Box<lexicon::app::bsky::embed::images::View>),
+                        #[serde(alias = "app.bsky.embed.external#view")]
+                        ExternalView(Box<lexicon::app::bsky::embed::external::View>),
+                        #[serde(alias = "app.bsky.embed.record#view")]
+                        RecordView(Box<lexicon::app::bsky::embed::record::View>),
+                        #[serde(alias = "app.bsky.embed.recordWithMedia#view")]
+                        RecordWithMediaView(
+                            Box<lexicon::app::bsky::embed::record_with_media::View>,
+                        ),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct PostView {
+                        pub like_count: Option<i64>,
+                        pub indexed_at: String,
+                        pub embed: Option<PostViewembedType>,
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub uri: String,
+                        pub cid: String,
+                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
+                        pub record: ::serde_json::Value,
+                        pub reply_count: Option<i64>,
+                        pub repost_count: Option<i64>,
+                        pub viewer: Option<ViewerState>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -453,79 +568,6 @@ pub mod lexicon {
                     pub struct ViewerState {
                         pub repost: Option<String>,
                         pub like: Option<String>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct BlockedPost {
-                        pub uri: String,
-                        pub blocked: bool,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ReasonRepost {
-                        pub by: lexicon::app::bsky::actor::defs::ProfileViewBasic,
-                        pub indexed_at: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum FeedViewPostreasonType {
-                        ReasonRepost(Box<ReasonRepost>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct FeedViewPost {
-                        pub reply: Option<ReplyRef>,
-                        pub reason: Option<FeedViewPostreasonType>,
-                        pub post: lexicon::app::bsky::feed::defs::PostView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ReplyRef {
-                        pub root: lexicon::app::bsky::feed::defs::PostView,
-                        pub parent: lexicon::app::bsky::feed::defs::PostView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum PostViewembedType {
-                        ImagesView,
-                        ExternalView,
-                        RecordView,
-                        RecordWithMediaView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct PostView {
-                        pub cid: String,
-                        pub embed: Option<PostViewembedType>,
-                        pub like_count: Option<i64>,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
-                        pub record: String,
-                        pub repost_count: Option<i64>,
-                        pub reply_count: Option<i64>,
-                        pub author: lexicon::app::bsky::actor::defs::ProfileViewBasic,
-                        pub viewer: Option<ViewerState>,
-                        pub uri: String,
-                        pub indexed_at: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct NotFoundPost {
-                        pub uri: String,
-                        pub not_found: bool,
                     }
                 }
                 pub mod get_author_feed {
@@ -555,6 +597,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed".to_string(),
                         )
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("actor".to_string(), actor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -571,10 +616,10 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub cursor: Option<String>,
+                        pub likes: Vec<Like>,
                         pub cid: Option<String>,
                         pub uri: String,
-                        pub likes: Vec<Like>,
+                        pub cursor: Option<String>,
                     }
                     use xrpc::error::XrpcError;
                     use xrpc::query::XrpcQuery;
@@ -588,6 +633,10 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.feed.getLikes".to_string(),
                         )
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("uri".to_string(), uri.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cid".to_string(), cid.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -596,9 +645,9 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Like {
+                        pub created_at: String,
                         pub indexed_at: String,
                         pub actor: lexicon::app::bsky::actor::defs::ProfileView,
-                        pub created_at: String,
                     }
                 }
                 pub mod get_post_thread {
@@ -611,10 +660,14 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum MainOutputthreadType {
-                        DefsThreadViewPost,
-                        DefsNotFoundPost,
-                        DefsBlockedPost,
+                        #[serde(alias = "app.bsky.feed.defs#threadViewPost")]
+                        DefsThreadViewPost(Box<lexicon::app::bsky::feed::defs::ThreadViewPost>),
+                        #[serde(alias = "app.bsky.feed.defs#notFoundPost")]
+                        DefsNotFoundPost(Box<lexicon::app::bsky::feed::defs::NotFoundPost>),
+                        #[serde(alias = "app.bsky.feed.defs#blockedPost")]
+                        DefsBlockedPost(Box<lexicon::app::bsky::feed::defs::BlockedPost>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -633,6 +686,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.feed.getPostThread".to_string(),
                         )
+                        .param("depth".to_string(), depth.to_string())
+                        .param("uri".to_string(), uri.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -677,9 +732,9 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
+                        pub reposted_by: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub cid: Option<String>,
                         pub cursor: Option<String>,
-                        pub reposted_by: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub uri: String,
                     }
                     use xrpc::error::XrpcError;
@@ -694,6 +749,10 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.feed.getRepostedBy".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("uri".to_string(), uri.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("cid".to_string(), cid.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -710,8 +769,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub cursor: Option<String>,
                         pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
+                        pub cursor: Option<String>,
                     }
                     #[doc = "Description: \"A view of the user's home timeline.\""]
                     use xrpc::error::XrpcError;
@@ -725,6 +784,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.feed.getTimeline".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("algorithm".to_string(), algorithm.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -749,17 +811,17 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct ReplyRef {
-                        pub root: lexicon::com::atproto::repo::strong_ref::Main,
                         pub parent: lexicon::com::atproto::repo::strong_ref::Main,
+                        pub root: lexicon::com::atproto::repo::strong_ref::Main,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Entity {
-                        pub value: String,
-                        pub r#type: String,
                         pub index: TextSlice,
+                        pub r#type: String,
+                        pub value: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -810,8 +872,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub cursor: Option<String>,
                         pub blocks: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
+                        pub cursor: Option<String>,
                     }
                     #[doc = "Description: \"Who is the requester's account blocking?\""]
                     use xrpc::error::XrpcError;
@@ -824,6 +886,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.graph.getBlocks".to_string(),
                         )
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("limit".to_string(), limit.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -841,8 +905,8 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub cursor: Option<String>,
-                        pub followers: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub subject: lexicon::app::bsky::actor::defs::ProfileView,
+                        pub followers: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who is following an actor?\""]
                     use xrpc::error::XrpcError;
@@ -856,6 +920,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.graph.getFollowers".to_string(),
                         )
+                        .param("actor".to_string(), actor.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -873,8 +940,8 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub follows: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
-                        pub cursor: Option<String>,
                         pub subject: lexicon::app::bsky::actor::defs::ProfileView,
+                        pub cursor: Option<String>,
                     }
                     #[doc = "Description: \"Who is an actor following?\""]
                     use xrpc::error::XrpcError;
@@ -888,6 +955,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.graph.getFollows".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("actor".to_string(), actor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -904,8 +974,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub mutes: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                         pub cursor: Option<String>,
+                        pub mutes: Vec<lexicon::app::bsky::actor::defs::ProfileView>,
                     }
                     #[doc = "Description: \"Who does the viewer mute?\""]
                     use xrpc::error::XrpcError;
@@ -918,6 +988,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.graph.getMutes".to_string(),
                         )
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("limit".to_string(), limit.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -997,6 +1069,7 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/app.bsky.notification.getUnreadCount"
                                 .to_string(),
                         )
+                        .param("seenAt".to_string(), seen_at.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1028,23 +1101,38 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/app.bsky.notification.listNotifications"
                                 .to_string(),
                         )
+                        .param("seenAt".to_string(), seen_at.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
+                    pub enum Reason {
+                        Like,
+                        Repost,
+                        Follow,
+                        Mention,
+                        Reply,
+                        Quote,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Notification {
-                        pub record: String,
-                        pub is_read: bool,
                         pub cid: String,
-                        pub reason: String,
-                        pub indexed_at: String,
-                        pub author: lexicon::app::bsky::actor::defs::ProfileView,
                         pub uri: String,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub record: ::serde_json::Value,
+                        pub reason: Reason,
                         pub reason_subject: Option<String>,
+                        pub is_read: bool,
+                        pub indexed_at: String,
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub author: lexicon::app::bsky::actor::defs::ProfileView,
                     }
                 }
                 pub mod update_seen {
@@ -1086,8 +1174,18 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Mention {
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
                     pub enum FeaturesType {
+                        #[serde(alias = "app.bsky.richtext.facet#mention")]
                         Mention(Box<Mention>),
+                        #[serde(alias = "app.bsky.richtext.facet#link")]
                         Link(Box<Link>),
                     }
                     #[derive(
@@ -1102,23 +1200,16 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
+                    pub struct ByteSlice {
+                        pub byte_end: i64,
+                        pub byte_start: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
                     pub struct Link {
                         pub uri: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Mention {
-                        pub did: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ByteSlice {
-                        pub byte_start: i64,
-                        pub byte_end: i64,
                     }
                 }
             }
@@ -1137,8 +1228,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub cursor: Option<String>,
                         pub feed: Vec<lexicon::app::bsky::feed::defs::FeedViewPost>,
+                        pub cursor: Option<String>,
                     }
                     #[doc = "Description: \"An unspecced view of globally popular items\""]
                     use xrpc::error::XrpcError;
@@ -1152,6 +1243,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/app.bsky.unspecced.getPopular".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("includeNsfw".to_string(), include_nsfw.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1168,238 +1262,6 @@ pub mod lexicon {
             pub mod admin {
                 #[allow(unused_imports)]
                 use super::lexicon;
-                pub mod defs {
-                    #[allow(unused_imports)]
-                    use super::lexicon;
-                    #[derive(
-                        Debug, Clone, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub struct Unimplemented;
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ActionReversal {
-                        pub created_at: String,
-                        pub created_by: String,
-                        pub reason: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct RepoRef {
-                        pub did: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ImageDetails {
-                        pub width: i64,
-                        pub height: i64,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct VideoDetails {
-                        pub height: i64,
-                        pub width: i64,
-                        pub length: i64,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct RepoView {
-                        pub invited_by: Option<lexicon::com::atproto::server::defs::InviteCode>,
-                        pub handle: String,
-                        pub email: Option<String>,
-                        pub related_records: Vec<Unimplemented>,
-                        pub did: String,
-                        pub moderation: Moderation,
-                        pub indexed_at: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ActionType {}
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum BlobViewdetailsType {
-                        ImageDetails(Box<ImageDetails>),
-                        VideoDetails(Box<VideoDetails>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct BlobView {
-                        pub details: Option<BlobViewdetailsType>,
-                        pub cid: String,
-                        pub created_at: String,
-                        pub size: i64,
-                        pub moderation: Option<Moderation>,
-                        pub mime_type: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct RecordViewDetail {
-                        pub value: String,
-                        pub moderation: ModerationDetail,
-                        pub blobs: Vec<BlobView>,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
-                        pub cid: String,
-                        pub indexed_at: String,
-                        pub uri: String,
-                        pub repo: RepoView,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ModerationDetail {
-                        pub current_action: Option<ActionViewCurrent>,
-                        pub reports: Vec<ReportView>,
-                        pub actions: Vec<ActionView>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ReportViewsubjectType {
-                        RepoRef(Box<RepoRef>),
-                        StrongRefMain,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ReportView {
-                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
-                        pub reason: Option<String>,
-                        pub reported_by: String,
-                        pub created_at: String,
-                        pub subject: ReportViewsubjectType,
-                        pub resolved_by_action_ids: Vec<i64>,
-                        pub id: i64,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct RepoViewDetail {
-                        pub moderation: ModerationDetail,
-                        pub handle: String,
-                        pub email: Option<String>,
-                        pub did: String,
-                        pub indexed_at: String,
-                        pub related_records: Vec<Unimplemented>,
-                        pub invites: Option<Vec<lexicon::com::atproto::server::defs::InviteCode>>,
-                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
-                        pub invited_by: Option<lexicon::com::atproto::server::defs::InviteCode>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ActionViewDetailsubjectType {
-                        RepoView(Box<RepoView>),
-                        RecordView(Box<RecordView>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ActionViewDetail {
-                        pub subject_blobs: Vec<BlobView>,
-                        pub reversal: Option<ActionReversal>,
-                        pub action: ActionType,
-                        pub id: i64,
-                        pub reason: String,
-                        pub subject: ActionViewDetailsubjectType,
-                        pub created_by: String,
-                        pub create_label_vals: Option<Vec<String>>,
-                        pub created_at: String,
-                        pub resolved_reports: Vec<ReportView>,
-                        pub negate_label_vals: Option<Vec<String>>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ActionViewsubjectType {
-                        RepoRef(Box<RepoRef>),
-                        StrongRefMain,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ActionView {
-                        pub id: i64,
-                        pub resolved_report_ids: Vec<i64>,
-                        pub created_at: String,
-                        pub reversal: Option<ActionReversal>,
-                        pub subject_blob_cids: Vec<String>,
-                        pub create_label_vals: Option<Vec<String>>,
-                        pub action: ActionType,
-                        pub subject: ActionViewsubjectType,
-                        pub reason: String,
-                        pub negate_label_vals: Option<Vec<String>>,
-                        pub created_by: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct RecordView {
-                        pub repo: RepoView,
-                        pub blob_cids: Vec<String>,
-                        pub indexed_at: String,
-                        pub uri: String,
-                        pub cid: String,
-                        pub moderation: Moderation,
-                        pub value: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Moderation {
-                        pub current_action: Option<ActionViewCurrent>,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    pub enum ReportViewDetailsubjectType {
-                        RepoView(Box<RepoView>),
-                        RecordView(Box<RecordView>),
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ReportViewDetail {
-                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
-                        pub reported_by: String,
-                        pub id: i64,
-                        pub reason: Option<String>,
-                        pub created_at: String,
-                        pub resolved_by_actions:
-                            Vec<lexicon::com::atproto::admin::defs::ActionView>,
-                        pub subject: ReportViewDetailsubjectType,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct ActionViewCurrent {
-                        pub id: i64,
-                        pub action: ActionType,
-                    }
-                }
                 pub mod disable_invite_codes {
                     #[allow(unused_imports)]
                     use super::lexicon;
@@ -1412,8 +1274,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub codes: Option<Vec<String>>,
                         pub accounts: Option<Vec<String>>,
+                        pub codes: Option<Vec<String>>,
                     }
                     #[doc = "Description: \"Disable some set of codes and/or all codes associated with a set of users\""]
                     pub fn main(token: &String, input: MainInput) -> Result<(), reqwest::Error> {
@@ -1453,6 +1315,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.admin.getInviteCodes".to_string(),
                         )
+                        .param("sort".to_string(), sort.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1476,6 +1341,7 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/com.atproto.admin.getModerationAction"
                                 .to_string(),
                         )
+                        .param("id".to_string(), id.to_string())
                         .token(token);
                         query.execute::<lexicon::com::atproto::admin::defs::ActionViewDetail>()
                     }
@@ -1508,6 +1374,9 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/com.atproto.admin.getModerationActions"
                                 .to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("subject".to_string(), subject.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1531,6 +1400,7 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/com.atproto.admin.getModerationReport"
                                 .to_string(),
                         )
+                        .param("id".to_string(), id.to_string())
                         .token(token);
                         query.execute::<lexicon::com::atproto::admin::defs::ReportViewDetail>()
                     }
@@ -1547,8 +1417,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub reports: Vec<lexicon::com::atproto::admin::defs::ReportView>,
                         pub cursor: Option<String>,
+                        pub reports: Vec<lexicon::com::atproto::admin::defs::ReportView>,
                     }
                     #[doc = "Description: \"List moderation reports related to a subject.\""]
                     use xrpc::error::XrpcError;
@@ -1564,6 +1434,10 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/com.atproto.admin.getModerationReports"
                                 .to_string(),
                         )
+                        .param("resolved".to_string(), resolved.to_string())
+                        .param("subject".to_string(), subject.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1587,6 +1461,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.admin.getRecord".to_string(),
                         )
+                        .param("uri".to_string(), uri.to_string())
+                        .param("cid".to_string(), cid.to_string())
                         .token(token);
                         query.execute::<lexicon::com::atproto::admin::defs::RecordViewDetail>()
                     }
@@ -1609,6 +1485,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.admin.getRepo".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
                         .token(token);
                         query.execute::<lexicon::com::atproto::admin::defs::RepoViewDetail>()
                     }
@@ -1625,9 +1502,9 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub created_by: String,
                         pub action_id: i64,
                         pub report_ids: Vec<i64>,
+                        pub created_by: String,
                     }
                     #[doc = "Description: \"Resolve moderation reports by an action.\""]
                     pub fn main(
@@ -1651,9 +1528,9 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub id: i64,
                         pub reason: String,
                         pub created_by: String,
+                        pub id: i64,
                     }
                     #[doc = "Description: \"Reverse a moderation action.\""]
                     pub fn main(
@@ -1677,8 +1554,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub cursor: Option<String>,
                         pub repos: Vec<lexicon::com::atproto::admin::defs::RepoView>,
+                        pub cursor: Option<String>,
                     }
                     #[doc = "Description: \"Find repositories based on a search term.\""]
                     use xrpc::error::XrpcError;
@@ -1693,6 +1570,10 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.admin.searchRepos".to_string(),
                         )
+                        .param("term".to_string(), term.to_string())
+                        .param("invitedBy".to_string(), invited_by.to_string())
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1707,22 +1588,37 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum MainInputsubjectType {
-                        DefsRepoRef,
-                        StrongRefMain,
+                        #[serde(alias = "com.atproto.admin.defs#repoRef")]
+                        DefsRepoRef(Box<lexicon::com::atproto::admin::defs::RepoRef>),
+                        #[serde(alias = "com.atproto.repo.strongRef")]
+                        StrongRef(Box<lexicon::com::atproto::repo::strong_ref::Main>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum Action {
+                        #[serde(alias = "com.atproto.admin.defs#takedown")]
+                        DefsTakedown(Box<lexicon::com::atproto::admin::defs::Takedown>),
+                        #[serde(alias = "com.atproto.admin.defs#flag")]
+                        DefsFlag(Box<lexicon::com::atproto::admin::defs::Flag>),
+                        #[serde(alias = "com.atproto.admin.defs#acknowledge")]
+                        DefsAcknowledge(Box<lexicon::com::atproto::admin::defs::Acknowledge>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
+                        pub reason: String,
                         pub subject_blob_cids: Option<Vec<String>>,
                         pub negate_label_vals: Option<Vec<String>>,
-                        pub action: String,
-                        pub reason: String,
-                        pub created_by: String,
-                        pub create_label_vals: Option<Vec<String>>,
                         pub subject: MainInputsubjectType,
+                        pub created_by: String,
+                        pub action: Action,
+                        pub create_label_vals: Option<Vec<String>>,
                     }
                     #[doc = "Description: \"Take a moderation action on a repo.\""]
                     pub fn main(
@@ -1791,6 +1687,279 @@ pub mod lexicon {
                             .json::<()>();
                     }
                 }
+                pub mod defs {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    pub struct Unimplemented;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum ActionViewsubjectType {
+                        #[serde(alias = "com.atproto.admin.defs#repoRef")]
+                        RepoRef(Box<RepoRef>),
+                        #[serde(alias = "com.atproto.repo.strongRef")]
+                        StrongRef(Box<lexicon::com::atproto::repo::strong_ref::Main>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ActionView {
+                        pub reason: String,
+                        pub resolved_report_ids: Vec<i64>,
+                        pub create_label_vals: Option<Vec<String>>,
+                        pub subject: ActionViewsubjectType,
+                        pub id: i64,
+                        pub action: ActionType,
+                        pub created_by: String,
+                        pub created_at: String,
+                        pub negate_label_vals: Option<Vec<String>>,
+                        pub reversal: Option<ActionReversal>,
+                        pub subject_blob_cids: Vec<String>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum BlobViewdetailsType {
+                        #[serde(alias = "com.atproto.admin.defs#imageDetails")]
+                        ImageDetails(Box<ImageDetails>),
+                        #[serde(alias = "com.atproto.admin.defs#videoDetails")]
+                        VideoDetails(Box<VideoDetails>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct BlobView {
+                        pub moderation: Option<Moderation>,
+                        pub mime_type: String,
+                        pub created_at: String,
+                        pub details: Option<BlobViewdetailsType>,
+                        pub cid: String,
+                        pub size: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ActionViewCurrent {
+                        pub id: i64,
+                        pub action: ActionType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct RepoView {
+                        pub email: Option<String>,
+                        pub invited_by: Option<lexicon::com::atproto::server::defs::InviteCode>,
+                        pub handle: String,
+                        pub related_records: Vec<Unimplemented>,
+                        pub moderation: Moderation,
+                        pub indexed_at: String,
+                        pub did: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct RepoRef {
+                        pub did: String,
+                    }
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct Takedown;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct RecordView {
+                        pub blob_cids: Vec<String>,
+                        pub uri: String,
+                        pub value: ::serde_json::Value,
+                        pub indexed_at: String,
+                        pub moderation: Moderation,
+                        pub repo: RepoView,
+                        pub cid: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Moderation {
+                        pub current_action: Option<ActionViewCurrent>,
+                    }
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct Escalate;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct RepoViewDetail {
+                        pub email: Option<String>,
+                        pub did: String,
+                        pub handle: String,
+                        pub related_records: Vec<Unimplemented>,
+                        pub moderation: ModerationDetail,
+                        pub invited_by: Option<lexicon::com::atproto::server::defs::InviteCode>,
+                        pub indexed_at: String,
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub invites: Option<Vec<lexicon::com::atproto::server::defs::InviteCode>>,
+                    }
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct Flag;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct RecordViewDetail {
+                        pub indexed_at: String,
+                        pub uri: String,
+                        pub moderation: ModerationDetail,
+                        pub repo: RepoView,
+                        pub value: ::serde_json::Value,
+                        pub cid: String,
+                        pub labels: Option<Vec<lexicon::com::atproto::label::defs::Label>>,
+                        pub blobs: Vec<BlobView>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum ActionViewDetailsubjectType {
+                        #[serde(alias = "com.atproto.admin.defs#repoView")]
+                        RepoView(Box<RepoView>),
+                        #[serde(alias = "com.atproto.admin.defs#recordView")]
+                        RecordView(Box<RecordView>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ActionViewDetail {
+                        pub action: ActionType,
+                        pub created_at: String,
+                        pub resolved_reports: Vec<ReportView>,
+                        pub created_by: String,
+                        pub reason: String,
+                        pub id: i64,
+                        pub subject_blobs: Vec<BlobView>,
+                        pub create_label_vals: Option<Vec<String>>,
+                        pub negate_label_vals: Option<Vec<String>>,
+                        pub reversal: Option<ActionReversal>,
+                        pub subject: ActionViewDetailsubjectType,
+                    }
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct Acknowledge;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ModerationDetail {
+                        pub current_action: Option<ActionViewCurrent>,
+                        pub actions: Vec<ActionView>,
+                        pub reports: Vec<ReportView>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum ReportViewDetailsubjectType {
+                        #[serde(alias = "com.atproto.admin.defs#repoView")]
+                        RepoView(Box<RepoView>),
+                        #[serde(alias = "com.atproto.admin.defs#recordView")]
+                        RecordView(Box<RecordView>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ReportViewDetail {
+                        pub reason: Option<String>,
+                        pub created_at: String,
+                        pub resolved_by_actions:
+                            Vec<lexicon::com::atproto::admin::defs::ActionView>,
+                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
+                        pub reported_by: String,
+                        pub id: i64,
+                        pub subject: ReportViewDetailsubjectType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ImageDetails {
+                        pub height: i64,
+                        pub width: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct VideoDetails {
+                        pub width: i64,
+                        pub height: i64,
+                        pub length: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum ReportViewsubjectType {
+                        #[serde(alias = "com.atproto.admin.defs#repoRef")]
+                        RepoRef(Box<RepoRef>),
+                        #[serde(alias = "com.atproto.repo.strongRef")]
+                        StrongRef(Box<lexicon::com::atproto::repo::strong_ref::Main>),
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ReportView {
+                        pub reported_by: String,
+                        pub created_at: String,
+                        pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
+                        pub reason: Option<String>,
+                        pub id: i64,
+                        pub resolved_by_action_ids: Vec<i64>,
+                        pub subject: ReportViewsubjectType,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct ActionReversal {
+                        pub created_by: String,
+                        pub reason: String,
+                        pub created_at: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
+                    pub enum ActionType {
+                        #[serde(alias = "com.atproto.admin.defs#takedown")]
+                        Takedown(Box<Takedown>),
+                        #[serde(alias = "com.atproto.admin.defs#flag")]
+                        Flag(Box<Flag>),
+                        #[serde(alias = "com.atproto.admin.defs#acknowledge")]
+                        Acknowledge(Box<Acknowledge>),
+                        #[serde(alias = "com.atproto.admin.defs#escalate")]
+                        Escalate(Box<Escalate>),
+                    }
+                }
             }
             pub mod identity {
                 #[allow(unused_imports)]
@@ -1817,6 +1986,7 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/com.atproto.identity.resolveHandle"
                                 .to_string(),
                         )
+                        .param("handle".to_string(), handle.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1862,11 +2032,11 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Label {
+                        pub uri: String,
+                        pub val: String,
+                        pub cid: Option<String>,
                         pub neg: Option<bool>,
                         pub cts: String,
-                        pub uri: String,
-                        pub cid: Option<String>,
-                        pub val: String,
                         pub src: String,
                     }
                 }
@@ -1882,8 +2052,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
                         pub cursor: Option<String>,
+                        pub labels: Vec<lexicon::com::atproto::label::defs::Label>,
                     }
                     #[doc = "Description: \"Find labels relevant to the provided URI patterns.\""]
                     use xrpc::error::XrpcError;
@@ -1898,6 +2068,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.label.queryLabels".to_string(),
                         )
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("limit".to_string(), limit.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -1920,10 +2092,17 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
+                    pub enum Name {
+                        OutdatedCursor,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Info {
-                        pub name: String,
                         pub message: Option<String>,
+                        pub name: Name,
                     }
                 }
             }
@@ -1940,9 +2119,12 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum MainOutputsubjectType {
-                        DefsRepoRef,
-                        StrongRefMain,
+                        #[serde(alias = "com.atproto.admin.defs#repoRef")]
+                        DefsRepoRef(Box<lexicon::com::atproto::admin::defs::RepoRef>),
+                        #[serde(alias = "com.atproto.repo.strongRef")]
+                        StrongRef(Box<lexicon::com::atproto::repo::strong_ref::Main>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -1950,27 +2132,30 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub subject: MainOutputsubjectType,
-                        pub reported_by: String,
+                        pub id: i64,
                         pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
                         pub created_at: String,
-                        pub id: i64,
+                        pub reported_by: String,
                         pub reason: Option<String>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(tag = "$type")]
                     pub enum MainInputsubjectType {
-                        DefsRepoRef,
-                        StrongRefMain,
+                        #[serde(alias = "com.atproto.admin.defs#repoRef")]
+                        DefsRepoRef(Box<lexicon::com::atproto::admin::defs::RepoRef>),
+                        #[serde(alias = "com.atproto.repo.strongRef")]
+                        StrongRef(Box<lexicon::com::atproto::repo::strong_ref::Main>),
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub subject: MainInputsubjectType,
                         pub reason_type: lexicon::com::atproto::moderation::defs::ReasonType,
                         pub reason: Option<String>,
+                        pub subject: MainInputsubjectType,
                     }
                     #[doc = "Description: \"Report a repo or a record.\""]
                     pub fn main(
@@ -1994,9 +2179,53 @@ pub mod lexicon {
                     )]
                     pub struct Unimplemented;
                     #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct ReasonViolation;
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct ReasonMisleading;
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct ReasonSpam;
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct ReasonOther;
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct ReasonSexual;
+                    #[derive(
+                        Debug, Clone, PartialEq, Eq, :: serde :: Deserialize, :: serde :: Serialize,
+                    )]
+                    pub struct ReasonRude;
+                    #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    pub enum ReasonType {}
+                    #[serde(tag = "$type")]
+                    pub enum ReasonType {
+                        #[serde(alias = "com.atproto.moderation.defs#reasonSpam")]
+                        DefsReasonSpam(Box<lexicon::com::atproto::moderation::defs::ReasonSpam>),
+                        #[serde(alias = "com.atproto.moderation.defs#reasonViolation")]
+                        DefsReasonViolation(
+                            Box<lexicon::com::atproto::moderation::defs::ReasonViolation>,
+                        ),
+                        #[serde(alias = "com.atproto.moderation.defs#reasonMisleading")]
+                        DefsReasonMisleading(
+                            Box<lexicon::com::atproto::moderation::defs::ReasonMisleading>,
+                        ),
+                        #[serde(alias = "com.atproto.moderation.defs#reasonSexual")]
+                        DefsReasonSexual(
+                            Box<lexicon::com::atproto::moderation::defs::ReasonSexual>,
+                        ),
+                        #[serde(alias = "com.atproto.moderation.defs#reasonRude")]
+                        DefsReasonRude(Box<lexicon::com::atproto::moderation::defs::ReasonRude>),
+                        #[serde(alias = "com.atproto.moderation.defs#reasonOther")]
+                        DefsReasonOther(Box<lexicon::com::atproto::moderation::defs::ReasonOther>),
+                    }
                 }
             }
             pub mod repo {
@@ -2013,15 +2242,6 @@ pub mod lexicon {
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
-                    pub struct Update {
-                        pub collection: String,
-                        pub value: String,
-                        pub rkey: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
                     pub struct Delete {
                         pub rkey: String,
                         pub collection: String,
@@ -2031,16 +2251,29 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Create {
-                        pub rkey: Option<String>,
                         pub collection: String,
-                        pub value: String,
+                        pub rkey: Option<String>,
+                        pub value: ::serde_json::Value,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Update {
+                        pub value: ::serde_json::Value,
+                        pub rkey: String,
+                        pub collection: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(tag = "$type")]
                     pub enum WritesType {
+                        #[serde(alias = "#create")]
                         Create(Box<Create>),
+                        #[serde(alias = "#update")]
                         Update(Box<Update>),
+                        #[serde(alias = "#delete")]
                         Delete(Box<Delete>),
                     }
                     #[derive(
@@ -2048,10 +2281,10 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub validate: Option<bool>,
                         pub swap_commit: Option<String>,
                         pub writes: Vec<WritesType>,
                         pub repo: String,
+                        pub validate: Option<bool>,
                     }
                     #[doc = "Description: \"Apply a batch transaction of creates, updates, and deletes.\""]
                     pub fn main(token: &String, input: MainInput) -> Result<(), reqwest::Error> {
@@ -2084,12 +2317,12 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub collection: String,
-                        pub repo: String,
-                        pub validate: Option<bool>,
-                        pub record: String,
                         pub swap_commit: Option<String>,
+                        pub validate: Option<bool>,
+                        pub collection: String,
                         pub rkey: Option<String>,
+                        pub repo: String,
+                        pub record: ::serde_json::Value,
                     }
                     #[doc = "Description: \"Create a new record.\""]
                     pub fn main(
@@ -2117,11 +2350,11 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub rkey: String,
-                        pub swap_record: Option<String>,
-                        pub collection: String,
-                        pub swap_commit: Option<String>,
                         pub repo: String,
+                        pub swap_record: Option<String>,
+                        pub rkey: String,
+                        pub swap_commit: Option<String>,
+                        pub collection: String,
                     }
                     #[doc = "Description: \"Delete a record, or ensure it doesn't exist.\""]
                     pub fn main(token: &String, input: MainInput) -> Result<(), reqwest::Error> {
@@ -2147,10 +2380,10 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub did: String,
-                        pub collections: Vec<String>,
-                        pub handle_is_correct: bool,
                         pub handle: String,
-                        pub didDoc: String,
+                        pub collections: Vec<String>,
+                        pub didDoc: ::serde_json::Value,
+                        pub handle_is_correct: bool,
                     }
                     #[doc = "Description: \"Get information about the repo, including the list of collections.\""]
                     use xrpc::error::XrpcError;
@@ -2159,6 +2392,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.repo.describeRepo".to_string(),
                         )
+                        .param("repo".to_string(), repo.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -2175,9 +2409,9 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub value: String,
-                        pub uri: String,
                         pub cid: Option<String>,
+                        pub uri: String,
+                        pub value: ::serde_json::Value,
                     }
                     #[doc = "Description: \"Get a record.\""]
                     use xrpc::error::XrpcError;
@@ -2192,6 +2426,10 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.repo.getRecord".to_string(),
                         )
+                        .param("repo".to_string(), repo.to_string())
+                        .param("collection".to_string(), collection.to_string())
+                        .param("rkey".to_string(), rkey.to_string())
+                        .param("cid".to_string(), cid.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -2203,6 +2441,15 @@ pub mod lexicon {
                         Debug, Clone, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Unimplemented;
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Record {
+                        pub cid: String,
+                        pub value: ::serde_json::Value,
+                        pub uri: String,
+                    }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
@@ -2227,17 +2474,15 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.repo.listRecords".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
+                        .param("rkeyEnd".to_string(), rkey_end.to_string())
+                        .param("rkeyStart".to_string(), rkey_start.to_string())
+                        .param("collection".to_string(), collection.to_string())
+                        .param("reverse".to_string(), reverse.to_string())
+                        .param("repo".to_string(), repo.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Record {
-                        pub cid: String,
-                        pub value: String,
-                        pub uri: String,
                     }
                 }
                 pub mod put_record {
@@ -2252,21 +2497,21 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub uri: String,
                         pub cid: String,
+                        pub uri: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub validate: Option<bool>,
-                        pub record: String,
-                        pub rkey: String,
                         pub repo: String,
                         pub collection: String,
-                        pub swap_record: Option<String>,
+                        pub validate: Option<bool>,
+                        pub record: ::serde_json::Value,
                         pub swap_commit: Option<String>,
+                        pub swap_record: Option<String>,
+                        pub rkey: String,
                     }
                     #[doc = "Description: \"Write a record, creating or updating it as needed.\""]
                     pub fn main(
@@ -2294,8 +2539,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Main {
-                        pub uri: String,
                         pub cid: String,
+                        pub uri: String,
                     }
                 }
                 pub mod upload_blob {
@@ -2339,21 +2584,21 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
-                        pub handle: String,
-                        pub did: String,
-                        pub refresh_jwt: String,
                         pub access_jwt: String,
+                        pub handle: String,
+                        pub refresh_jwt: String,
+                        pub did: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub invite_code: Option<String>,
-                        pub recovery_key: Option<String>,
-                        pub email: String,
                         pub handle: String,
                         pub password: String,
+                        pub recovery_key: Option<String>,
+                        pub email: String,
+                        pub invite_code: Option<String>,
                     }
                     #[doc = "Description: \"Create an account.\""]
                     pub fn main(
@@ -2402,8 +2647,8 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct AppPassword {
                         pub name: String,
-                        pub password: String,
                         pub created_at: String,
+                        pub password: String,
                     }
                 }
                 pub mod create_invite_code {
@@ -2483,8 +2728,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct AccountCodes {
-                        pub codes: Vec<String>,
                         pub account: String,
+                        pub codes: Vec<String>,
                     }
                 }
                 pub mod create_session {
@@ -2499,19 +2744,19 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
+                        pub email: Option<String>,
                         pub access_jwt: String,
                         pub refresh_jwt: String,
-                        pub did: String,
                         pub handle: String,
-                        pub email: Option<String>,
+                        pub did: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub identifier: String,
                         pub password: String,
+                        pub identifier: String,
                     }
                     #[doc = "Description: \"Create an authentication session.\""]
                     pub fn main(
@@ -2539,21 +2784,21 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct InviteCode {
-                        pub code: String,
                         pub created_by: String,
-                        pub created_at: String,
-                        pub for_account: String,
-                        pub uses: Vec<InviteCodeUse>,
                         pub available: i64,
+                        pub created_at: String,
+                        pub code: String,
                         pub disabled: bool,
+                        pub uses: Vec<InviteCodeUse>,
+                        pub for_account: String,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct InviteCodeUse {
-                        pub used_at: String,
                         pub used_by: String,
+                        pub used_at: String,
                     }
                 }
                 pub mod delete_account {
@@ -2568,9 +2813,9 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct MainInput {
-                        pub password: String,
-                        pub did: String,
                         pub token: String,
+                        pub did: String,
+                        pub password: String,
                     }
                     #[doc = "Description: \"Delete a user account with a token and password.\""]
                     pub fn main(token: &String, input: MainInput) -> Result<(), reqwest::Error> {
@@ -2613,8 +2858,8 @@ pub mod lexicon {
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct Links {
-                        pub terms_of_service: Option<String>,
                         pub privacy_policy: Option<String>,
+                        pub terms_of_service: Option<String>,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -2622,8 +2867,8 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub available_user_domains: Vec<String>,
-                        pub links: Option<Links>,
                         pub invite_code_required: Option<bool>,
+                        pub links: Option<Links>,
                     }
                     #[doc = "Description: \"Get a document describing the service's accounts configuration.\""]
                     use xrpc::error::XrpcError;
@@ -2663,6 +2908,8 @@ pub mod lexicon {
                             "https://bsky.social/xrpc/com.atproto.server.getAccountInviteCodes"
                                 .to_string(),
                         )
+                        .param("createAvailable".to_string(), create_available.to_string())
+                        .param("includeUsed".to_string(), include_used.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -2680,8 +2927,8 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub did: String,
-                        pub handle: String,
                         pub email: Option<String>,
+                        pub handle: String,
                     }
                     #[doc = "Description: \"Get information about the current session.\""]
                     use xrpc::error::XrpcError;
@@ -2741,8 +2988,8 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct MainOutput {
                         pub did: String,
-                        pub access_jwt: String,
                         pub refresh_jwt: String,
+                        pub access_jwt: String,
                         pub handle: String,
                     }
                     #[doc = "Description: \"Refresh an authentication session.\""]
@@ -2872,6 +3119,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getBlob".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
+                        .param("cid".to_string(), cid.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -2894,6 +3143,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getBlocks".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -2916,6 +3166,8 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getCheckout".to_string(),
                         )
+                        .param("commit".to_string(), commit.to_string())
+                        .param("did".to_string(), did.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -2946,6 +3198,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getCommitPath".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
+                        .param("latest".to_string(), latest.to_string())
+                        .param("earliest".to_string(), earliest.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -2971,6 +3226,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getHead".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -2995,6 +3251,10 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getRecord".to_string(),
                         )
+                        .param("rkey".to_string(), rkey.to_string())
+                        .param("commit".to_string(), commit.to_string())
+                        .param("collection".to_string(), collection.to_string())
+                        .param("did".to_string(), did.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -3018,6 +3278,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.getRepo".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
+                        .param("earliest".to_string(), earliest.to_string())
+                        .param("latest".to_string(), latest.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -3048,6 +3311,9 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.listBlobs".to_string(),
                         )
+                        .param("did".to_string(), did.to_string())
+                        .param("latest".to_string(), latest.to_string())
+                        .param("earliest".to_string(), earliest.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
                     }
@@ -3059,14 +3325,6 @@ pub mod lexicon {
                         Debug, Clone, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     pub struct Unimplemented;
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Repo {
-                        pub did: String,
-                        pub head: String,
-                    }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
@@ -3086,8 +3344,18 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.listRepos".to_string(),
                         )
+                        .param("limit".to_string(), limit.to_string())
+                        .param("cursor".to_string(), cursor.to_string())
                         .token(token);
                         query.execute::<MainOutput>()
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Repo {
+                        pub did: String,
+                        pub head: String,
                     }
                 }
                 pub mod notify_of_update {
@@ -3104,6 +3372,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.notifyOfUpdate".to_string(),
                         )
+                        .param("hostname".to_string(), hostname.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -3122,6 +3391,7 @@ pub mod lexicon {
                         let query = XrpcQuery::new(
                             "https://bsky.social/xrpc/com.atproto.sync.requestCrawl".to_string(),
                         )
+                        .param("hostname".to_string(), hostname.to_string())
                         .token(token);
                         query.execute::<()>()
                     }
@@ -3136,21 +3406,9 @@ pub mod lexicon {
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Migrate {
-                        pub did: String,
-                        pub time: String,
-                        pub migrate_to: Option<String>,
-                        pub seq: i64,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Tombstone {
-                        pub time: String,
-                        pub seq: i64,
-                        pub did: String,
+                    #[serde(tag = "$type")]
+                    pub enum Name {
+                        OutdatedCursor,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
@@ -3158,42 +3416,70 @@ pub mod lexicon {
                     #[serde(rename_all = "camelCase")]
                     pub struct Info {
                         pub message: Option<String>,
-                        pub name: String,
+                        pub name: Name,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Handle {
-                        pub seq: i64,
-                        pub time: String,
-                        pub did: String,
-                        pub handle: String,
-                    }
-                    #[derive(
-                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
-                    )]
-                    #[serde(rename_all = "camelCase")]
-                    pub struct Commit {
-                        pub ops: Vec<RepoOp>,
-                        pub too_big: bool,
-                        pub seq: i64,
-                        pub rebase: bool,
-                        pub prev: Option<String>,
-                        pub time: String,
-                        pub blocks: String,
-                        pub commit: String,
-                        pub blobs: Vec<Unimplemented>,
-                        pub repo: String,
+                    #[serde(tag = "$type")]
+                    pub enum Action {
+                        Create,
+                        Update,
+                        Delete,
                     }
                     #[derive(
                         Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
                     )]
                     #[serde(rename_all = "camelCase")]
                     pub struct RepoOp {
-                        pub action: String,
                         pub path: String,
-                        pub cid: Option<String>,
+                        pub action: Action,
+                        pub cid: Option<::serde_json::Value>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Commit {
+                        pub seq: i64,
+                        pub repo: String,
+                        pub time: String,
+                        pub ops: Vec<RepoOp>,
+                        pub blocks: ::serde_json::Value,
+                        pub commit: ::serde_json::Value,
+                        pub rebase: bool,
+                        pub blobs: Vec<Unimplemented>,
+                        pub too_big: bool,
+                        pub prev: Option<::serde_json::Value>,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Handle {
+                        pub handle: String,
+                        pub seq: i64,
+                        pub did: String,
+                        pub time: String,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Tombstone {
+                        pub did: String,
+                        pub time: String,
+                        pub seq: i64,
+                    }
+                    #[derive(
+                        Clone, Debug, PartialEq, Eq, :: serde :: Serialize, :: serde :: Deserialize,
+                    )]
+                    #[serde(rename_all = "camelCase")]
+                    pub struct Migrate {
+                        pub migrate_to: Option<String>,
+                        pub time: String,
+                        pub seq: i64,
+                        pub did: String,
                     }
                 }
             }

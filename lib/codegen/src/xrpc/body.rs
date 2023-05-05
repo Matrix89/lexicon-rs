@@ -15,7 +15,7 @@ impl CodeGen {
                 let code = match schema {
                     XrpcBodySchema::Object(obj) => self.gen_object(&name, &"".to_owned(), obj),
                     XrpcBodySchema::RefVariant(variant) => {
-                        return (gen_ref_variant(&name, variant).0, quote! {})
+                        return (gen_ref_variant(&name, variant, &"".to_owned()).0, quote! {})
                     }
                     t => todo!("{:?}", t),
                 };

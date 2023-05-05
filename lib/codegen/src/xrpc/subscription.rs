@@ -17,7 +17,7 @@ impl CodeGen {
     ) -> TokenStream {
         let name = format_ident!("{}", name.to_case(Case::Snake));
         let desc = format!("{}", description.unwrap_or("no desc".to_owned()));
-        let parameters = self.gen_parameters(parameters.unwrap_or_default());
+        let parameters = self.gen_parameters(&parameters.unwrap_or_default());
         quote! {
             #[doc=#desc]
             pub fn #name(#parameters) {}

@@ -6,9 +6,9 @@ use quote::{format_ident, quote};
 use crate::CodeGen;
 
 impl CodeGen {
-    pub fn gen_parameters(&self, parameters: Parameters) -> TokenStream {
-        let properties = parameters.properties.unwrap_or_default();
-        let required = parameters.required.unwrap_or_default();
+    pub fn gen_parameters(&self, parameters: &Parameters) -> TokenStream {
+        let properties = parameters.properties.clone().unwrap_or_default();
+        let required = parameters.required.clone().unwrap_or_default();
 
         let mut properties = properties.into_iter().collect::<Vec<_>>();
         properties.sort_by(|a, b| a.0.cmp(&b.0));

@@ -58,8 +58,12 @@ impl XrpcQuery {
             let output = serde_json::from_str::<Output>(&text);
             match output {
                 Ok(output) => Ok(output),
-                Err(e) => Err(XrpcError::Decode(e, text.clone())),
+                Err(e) => Err(XrpcError::Decode(e, /*text.clone()*/ "".to_string())),
             }
         }
+    }
+
+    pub fn execute_untyped(self) -> Result<serde_json::Value, XrpcError> {
+        return self.execute::<serde_json::Value>();
     }
 }

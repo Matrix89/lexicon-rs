@@ -25,7 +25,16 @@ impl CodeGen {
             UserType::Object(obj) => self.gen_object(&def.0, namespace, obj),
             UserType::XrpcQuery(query) => self.gen_query(namespace, &def.0, query),
             UserType::XrpcProcedure(proc) => self.gen_procedure(namespace, &def.0, proc),
-            UserType::String(str) => gen_union(&def.0, str.known_values.unwrap_or_default()).1,
+            UserType::String(str) => {
+                gen_union(&def.0, str.known_values.unwrap_or_default(), namespace).1
+            }
+            UserType::Token(token) => {
+                let name = format_ident!("{}", def.0.to_case(Case::Pascal));
+                quote! {
+                    #[derive(Debug, Clone, PartialEq, Eq, ::serde::Deserialize, ::serde::Serialize)]
+                    pub struct #name;
+                }
+            }
             _ => {
                 println!("Unknown top level UserType: {:?}", def);
                 quote! {}

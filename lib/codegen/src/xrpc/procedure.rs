@@ -39,7 +39,7 @@ impl CodeGen {
         let mut doc = DocBuilder::new();
         doc.add_optional_item("Description", &proc.description);
 
-        let parameters = self.gen_parameters(proc.parameters.unwrap_or_default());
+        let parameters = self.gen_parameters(&proc.parameters.unwrap_or_default());
         let (output_type, output) = self.gen_body(
             &format!("{}Output", name.to_case(Case::Pascal)),
             proc.output.unwrap_or_default(),

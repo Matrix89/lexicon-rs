@@ -22,6 +22,7 @@ pub fn build_ref_target(r#ref: &str) -> syn::Path {
         let ident = ident.to_case(Case::Pascal);
         format!("lexicon::{}::{}", ns, ident)
     };
+    println!("ref_target: {}", ref_target);
     let ref_target: syn::Path = syn::parse_str(ref_target.as_str()).unwrap();
     ref_target
 }
@@ -49,14 +50,17 @@ impl CodeGen {
         let mut doc = DocBuilder::new();
 
         let (name, prop_type, additional_code) = match property {
-            ObjectField::Primitive(primitive) => self.gen_primitive(name, primitive, &mut doc),
+            ObjectField::Primitive(primitive) => {
+                self.gen_primitive(name, primitive, namespace, &mut doc)
+            }
             ObjectField::RefVariant(variant) => {
                 let (enum_name, r#enum) =
-                    gen_ref_variant(&format!("{}{}", object_name, name), variant);
+                    gen_ref_variant(&format!("{}{}", object_name, name), variant, namespace);
                 let name = gen_field_name(name);
                 (name, enum_name, r#enum)
             }
-            ObjectField::Blob(blob) => {
+            ObjectField::Blob(ref blob) => {
+                println!("{}#{}/{}: {:?}", namespace, object_name, name, property);
                 doc.add_optional_item("description", &blob.description);
                 doc.add_optional_item("accept", &blob.accept);
                 doc.add_optional_item("max_size", &blob.max_size);
@@ -68,8 +72,13 @@ impl CodeGen {
                 doc.add_optional_item("min_length", &array.min_length);
                 doc.add_optional_item("max_length", &array.max_length);
 
-                gen_array(name, array)
+                gen_array(name, array, namespace)
             }
+            ObjectField::Unknown => (
+                format_ident!("{}", name),
+                quote! { ::serde_json::Value },
+                None,
+            ),
             _ => todo!("{:?}", property),
         };
 
