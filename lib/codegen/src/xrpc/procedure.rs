@@ -19,13 +19,10 @@ fn gen_body(
     let input = format_ident!("input");
 
     quote! {
-        let client = reqwest::blocking::Client::new();
-        return client
-            .post(#url)
-            .header("Authorization", token)
-            .json(&#input)
-            .send()?
-            .json::<#output_type>();
+        let proc = XrpcProcedure::new(#url.to_string())
+            .input(#input)
+            .token(token);
+        proc.execute::<#output_type>()
     }
 }
 
@@ -57,10 +54,12 @@ impl CodeGen {
         let doc = doc.build();
 
         quote! {
+            use xrpc::error::XrpcError;
+            use xrpc::procedure::XrpcProcedure;
             #output
             #input
             #doc
-            pub fn #name(token: &String, input: #input_type, #parameters) -> Result<#output_type, reqwest::Error> {
+            pub fn #name(token: &String, input: #input_type, #parameters) -> Result<#output_type, XrpcError> {
                 #body
             }
         }

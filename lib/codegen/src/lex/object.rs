@@ -22,7 +22,6 @@ pub fn build_ref_target(r#ref: &str) -> syn::Path {
         let ident = ident.to_case(Case::Pascal);
         format!("lexicon::{}::{}", ns, ident)
     };
-    println!("ref_target: {}", ref_target);
     let ref_target: syn::Path = syn::parse_str(ref_target.as_str()).unwrap();
     ref_target
 }
@@ -60,7 +59,6 @@ impl CodeGen {
                 (name, enum_name, r#enum)
             }
             ObjectField::Blob(ref blob) => {
-                println!("{}#{}/{}: {:?}", namespace, object_name, name, property);
                 doc.add_optional_item("description", &blob.description);
                 doc.add_optional_item("accept", &blob.accept);
                 doc.add_optional_item("max_size", &blob.max_size);

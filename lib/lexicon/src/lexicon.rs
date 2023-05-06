@@ -228,14 +228,14 @@ pub struct Enum {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Record {
-    description: Option<String>,
-    key: Option<String>,
-    record: Box<UserType>,
+    pub description: Option<String>,
+    pub key: Option<String>,
+    pub record: Object,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Token {
-    description: Option<String>,
+    pub description: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

@@ -29,14 +29,17 @@ impl CodeGen {
                 gen_union(&def.0, str.known_values.unwrap_or_default(), namespace).1
             }
             UserType::Token(token) => {
+                let desc = token.description.unwrap_or_default();
                 let name = format_ident!("{}", def.0.to_case(Case::Pascal));
                 quote! {
                     #[derive(Debug, Clone, PartialEq, Eq, ::serde::Deserialize, ::serde::Serialize)]
+                    #[doc=#desc]
                     pub struct #name;
                 }
             }
+            UserType::Record(record) => self.gen_record(&def.0, record, namespace),
             _ => {
-                println!("Unknown top level UserType: {:?}", def);
+                println!("Unsupported top level UserType: {:?}", def);
                 quote! {}
             }
         }

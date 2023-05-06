@@ -27,10 +27,7 @@ impl CodeGen {
                 println!("Unsupported output encoding: {:?}", v);
                 (quote! {()}, quote! {})
             }
-            _ => {
-                println!("Missing output type: {:?}", body);
-                (quote! {()}, quote! {})
-            }
+            _ => (quote! {()}, quote! {}),
         }
     }
 }
