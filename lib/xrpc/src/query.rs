@@ -30,11 +30,11 @@ impl XrpcQuery {
         self
     }
 
-    pub fn execute<Output>(self) -> Result<Output, XrpcError>
+    pub async fn execute<Output>(self) -> Result<Output, XrpcError>
     where
         Output: serde::de::DeserializeOwned + Sized,
     {
-        let client = reqwest::blocking::Client::new();
+        let client = reqwest::Client::new();
         let request = client.get(self.url).query(&self.params);
 
         let request = if let Some(token) = self.token {
@@ -43,8 +43,8 @@ impl XrpcQuery {
             request
         };
 
-        let result = request.send()?;
-        let text = result.text()?;
+        let result = request.send().await?;
+        let text = result.text().await?;
         let response = json!(&text);
 
         if response.get("error").is_some() {
@@ -63,7 +63,7 @@ impl XrpcQuery {
         }
     }
 
-    pub fn execute_untyped(self) -> Result<serde_json::Value, XrpcError> {
-        return self.execute::<serde_json::Value>();
+    pub async fn execute_untyped(self) -> Result<serde_json::Value, XrpcError> {
+        return self.execute::<serde_json::Value>().await;
     }
 }

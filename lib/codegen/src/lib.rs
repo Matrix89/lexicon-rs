@@ -17,7 +17,7 @@ pub struct CodeGen {
 
 impl CodeGen {
     pub fn new(tree: NSIDNode) -> Self {
-        Self { tree, docs: false }
+        Self { tree, docs: true }
     }
 
     fn gen_def(self: &CodeGen, namespace: &String, def: (String, UserType)) -> TokenStream {
@@ -25,6 +25,7 @@ impl CodeGen {
             UserType::Object(obj) => self.gen_object(&def.0, namespace, obj),
             UserType::XrpcQuery(query) => self.gen_query(namespace, &def.0, query),
             UserType::XrpcProcedure(proc) => self.gen_procedure(namespace, &def.0, proc),
+            UserType::XrpcSubscription(sub) => self.gen_subscription(namespace, &def.0, sub),
             UserType::String(str) => {
                 gen_union(&def.0, str.known_values.unwrap_or_default(), namespace).1
             }

@@ -29,16 +29,10 @@ fn gen_body(
         })
         .collect::<TokenStream>();
     quote! {
-        /*let client = reqwest::blocking::Client::new();
-        return client
-            .get(#url)
-            .header("Authorization", token)
-            .send()?
-            .json::<#output_type>();*/
         let query = XrpcQuery::new(#url.to_string())
             #params
         .token(token);
-        query.execute::<#output_type>()
+        query.execute::<#output_type>().await
     }
 }
 
@@ -64,7 +58,7 @@ impl CodeGen {
             #doc
             use xrpc::error::XrpcError;
             use xrpc::query::XrpcQuery;
-            pub fn #name(token: &String, #parameters) -> Result<#output_type, XrpcError> {
+            pub async fn #name(token: &String, #parameters) -> Result<#output_type, XrpcError> {
                 #body
             }
         }

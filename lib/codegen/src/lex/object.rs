@@ -80,10 +80,13 @@ impl CodeGen {
             _ => todo!("{:?}", property),
         };
 
-        let prop_type = if is_nullable || !is_required {
-            quote! { Option<#prop_type> }
+        let prop = if is_nullable || !is_required {
+            quote! {
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub #name: Option<#prop_type>,
+            }
         } else {
-            prop_type
+            quote! { pub #name: #prop_type, }
         };
 
         doc.add_item("nullable", is_nullable);
@@ -97,7 +100,7 @@ impl CodeGen {
 
         let property_code = quote! {
             #doc
-            pub #name: #prop_type,
+            #prop
         };
 
         (property_code, additional_code)

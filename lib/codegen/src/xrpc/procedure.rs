@@ -22,7 +22,7 @@ fn gen_body(
         let proc = XrpcProcedure::new(#url.to_string())
             .input(#input)
             .token(token);
-        proc.execute::<#output_type>()
+        proc.execute::<#output_type>().await
     }
 }
 
@@ -59,7 +59,7 @@ impl CodeGen {
             #output
             #input
             #doc
-            pub fn #name(token: &String, input: #input_type, #parameters) -> Result<#output_type, XrpcError> {
+            pub async fn #name(token: &String, input: #input_type, #parameters) -> Result<#output_type, XrpcError> {
                 #body
             }
         }

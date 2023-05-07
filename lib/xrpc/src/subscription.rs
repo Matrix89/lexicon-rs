@@ -1,26 +1,24 @@
 use std::collections::HashMap;
 
+use futures::StreamExt;
 use serde_json::json;
+use tokio_tungstenite::connect_async;
 
 use crate::error::XrpcError;
 
-pub struct XrpcProcedure<Input> {
+#[derive(Debug)]
+pub struct XrpcSubscription {
     url: String,
     params: HashMap<String, String>,
     token: Option<String>,
-    input: Option<Input>,
 }
 
-impl<Input> XrpcProcedure<Input>
-where
-    Input: serde::ser::Serialize + Sized,
-{
+impl XrpcSubscription {
     pub fn new(url: String) -> Self {
         Self {
             url,
             params: HashMap::new(),
             token: None,
-            input: None,
         }
     }
 
@@ -29,31 +27,27 @@ where
         self
     }
 
-    pub fn input(mut self, input: Input) -> Self {
-        self.input = Some(input);
-        self
-    }
-
     pub fn token(mut self, token: &String) -> Self {
         self.token = Some(token.clone());
         self
     }
 
-    pub async fn execute<Output>(self) -> Result<Output, XrpcError>
-    where
-        Output: serde::de::DeserializeOwned + Sized,
-    {
-        let client = reqwest::Client::new();
-        let request = client.post(self.url).query(&self.params);
+    pub async fn subscribe(self) -> Result<(), XrpcError> {
+        println!("Connecting to {}", self.url);
+        let result = connect_async(self.url).await;
+        println!("{:?}", result);
+        let (mut socket, _response) = result.unwrap();
+        while let Some(v) = socket.next().await {
+            println!("Received: {:?}", v);
+        }
+
+        Ok(())
+
+        /*let client = reqwest::Client::new();
+        let request = client.get(self.url).query(&self.params);
 
         let request = if let Some(token) = self.token {
             request.header("Authorization", token)
-        } else {
-            request
-        };
-
-        let request = if let Some(input) = self.input {
-            request.json(&input)
         } else {
             request
         };
@@ -73,8 +67,8 @@ where
             let output = serde_json::from_str::<Output>(&text);
             match output {
                 Ok(output) => Ok(output),
-                Err(e) => Err(XrpcError::Decode(e, text.clone())),
+                Err(e) => Err(XrpcError::Decode(e, /*text.clone()*/ "".to_string())),
             }
-        }
+        }*/
     }
 }
