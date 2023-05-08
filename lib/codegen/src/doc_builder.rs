@@ -5,12 +5,14 @@ use proc_macro2::TokenStream;
 
 pub struct DocBuilder {
     items: HashMap<String, String>,
+    arguments: HashMap<String, String>,
 }
 
 impl DocBuilder {
     pub fn new() -> Self {
         Self {
             items: HashMap::new(),
+            arguments: HashMap::new(),
         }
     }
 
@@ -24,8 +26,16 @@ impl DocBuilder {
         self.items.insert(name.to_string(), format!("{:?}", value));
     }
 
+    pub fn add_argument(&mut self, name: &str, value: Option<impl fmt::Debug>) {
+        if let Some(value) = value {
+            self.arguments
+                .insert(name.to_string(), format!("{:?}", value));
+        }
+    }
+
     pub fn build(&self) -> TokenStream {
-        self.items
+        let props = self
+            .items
             .iter()
             .map(|(name, value)| {
                 let value = format!("{}: {}", name, value);
@@ -33,6 +43,32 @@ impl DocBuilder {
                     #[doc = #value]
                 }
             })
-            .collect::<TokenStream>()
+            .collect::<TokenStream>();
+
+        let arguments = {
+            if self.arguments.is_empty() {
+                return quote! {};
+            }
+
+            let arguments = self
+                .arguments
+                .iter()
+                .map(|(name, value)| {
+                    let value = format!("* `{}` - {}", name, value);
+                    quote! {
+                        #[doc = #value]
+                    }
+                })
+                .collect::<TokenStream>();
+            quote! {
+                #[doc = "# Arguments"]
+                #arguments
+            }
+        };
+
+        quote! {
+            #props
+            #arguments
+        }
     }
 }
