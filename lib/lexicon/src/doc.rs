@@ -17,10 +17,12 @@ pub struct LexiconDoc {
 }
 
 impl FromStr for LexiconDoc {
-    type Err = serde_path_to_error::Error<serde_json::Error>;
+    //type Err = serde_path_to_error::Error<serde_json::Error>;
+    type Err = serde_json::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let deserializer = &mut serde_json::Deserializer::from_str(s);
-        serde_path_to_error::deserialize(deserializer)
+        //let deserializer = &mut serde_json::Deserializer::from_str(s);
+        //serde_path_to_error::deserialize(deserializer)
+        serde_json::from_str(s)
     }
 }

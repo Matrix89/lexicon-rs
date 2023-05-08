@@ -1,6 +1,6 @@
 use convert_case::{Case, Casing};
 use lex::union::gen_union;
-use lexicon::lexicon::UserType;
+use lexicon::lexicon::{LexString, UserType};
 use nsid::NSIDNode;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -26,9 +26,16 @@ impl CodeGen {
             UserType::XrpcQuery(query) => self.gen_query(namespace, &def.0, query),
             UserType::XrpcProcedure(proc) => self.gen_procedure(namespace, &def.0, proc),
             UserType::XrpcSubscription(sub) => self.gen_subscription(namespace, &def.0, sub),
-            UserType::String(str) => {
-                gen_union(&def.0, str.known_values.unwrap_or_default(), namespace).1
-            }
+            UserType::String(str) => match str {
+                LexString::OtherString(str) => {
+                    if let Some(known_values) = str.known_values {
+                        gen_union(&def.0, known_values, namespace).1
+                    } else {
+                        quote! {}
+                    }
+                }
+                v => todo!("String {:?}", v),
+            },
             UserType::Token(token) => {
                 let desc = token.description.unwrap_or_default();
                 let name = format_ident!("{}", def.0.to_case(Case::Pascal));
@@ -57,13 +64,21 @@ impl CodeGen {
                             .replace("/main", ""),
                     )
                 });
-                let name = format_ident!("{}", name.to_case(Case::Snake));
-
-                quote! {
-                    pub mod #name {
+                if name == "lexicon" {
+                    quote! {
                         #[allow(unused_imports)]
                         use super::lexicon;
                         #(#children)*
+                    }
+                } else {
+                    let name = format_ident!("{}", name.to_case(Case::Snake));
+
+                    quote! {
+                        pub mod #name {
+                            #[allow(unused_imports)]
+                            use super::lexicon;
+                            #(#children)*
+                        }
                     }
                 }
             }
@@ -94,12 +109,36 @@ impl CodeGen {
         let lexicon = self.gen_lexicon(node, namespace);
 
         let xrpc_preamble = xrpc::preamble::gen_preamble();
-        let lexicon_preamble = quote! {};
+        let lexicon_preamble = quote! {
+            pub mod did {
+                pub type Did = String;
+            }
+            pub mod cid {
+                pub type Cid = String;
+            }
+            pub mod handle {
+                pub type Handle = String;
+            }
+            pub mod at_uri {
+                pub type AtUri = String;
+            }
+            pub mod at_identifier {
+                pub type AtIdentifier = String;
+            }
+            pub mod nsid {
+                pub type Nsid = String;
+            }
+            pub mod url {
+                pub type Url = String;
+            }
+        };
 
         quote! {
-            #lexicon_preamble
             #xrpc_preamble
-            #lexicon
+            pub mod lexicon {
+                #lexicon_preamble
+                #lexicon
+            }
         }
     }
 }

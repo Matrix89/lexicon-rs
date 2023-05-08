@@ -1,5 +1,5 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{Parameter, Parameters, Primitive, XrpcQuery};
+use lexicon::lexicon::{LexString, Parameter, Parameters, Primitive, XrpcQuery};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -34,7 +34,18 @@ impl CodeGen {
                 let desc = match prop {
                     Parameter::Array(arr) => arr.description.clone(),
                     Parameter::Primitive(primitive) => match primitive {
-                        Primitive::String(string) => string.description.clone(),
+                        Primitive::String(format) => match format {
+                            LexString::AtIdentifier(identifier) => identifier.description.clone(),
+                            LexString::OtherString(string) => string.description.clone(),
+                            LexString::Uri(uri) => uri.description.clone(),
+                            LexString::AtUri(uri) => uri.description.clone(),
+                            LexString::Cid(cid) => cid.description.clone(),
+                            LexString::Datetime(datetime) => datetime.description.clone(),
+                            LexString::Did(did) => did.description.clone(),
+                            LexString::Handle(handle) => handle.description.clone(),
+                            LexString::Nsid(nsid) => nsid.description.clone(),
+                            v => todo!("format: {:?}", v),
+                        },
                         Primitive::Boolean(bool) => bool.description.clone(),
                         Primitive::Integer(int) => int.description.clone(),
                     },

@@ -12,31 +12,176 @@ pub type XrpcError = String;
 pub type JV = JSONValue;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "kebab-case")]
-pub enum StringFormat {
-    Datetime,
-    Uri,
-    AtUri,
-    Did,
-    Handle,
-    AtIdentifier,
-    Nsid,
-    Cid,
+#[serde(deny_unknown_fields)]
+pub struct Datetime {
+    pub description: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct LexString {
-    pub format: Option<StringFormat>,
+#[serde(deny_unknown_fields)]
+pub struct Uri {
     pub description: Option<String>,
-    pub default: Option<String>,
-    pub min_length: Option<u64>,
-    pub max_length: Option<u64>,
-    pub min_graphemes: Option<u64>,
-    pub max_graphemes: Option<u64>,
-    pub r#enum: Option<Vec<String>>,
-    pub r#const: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct AtUri {
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Did {
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Handle {
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct AtIdentifier {
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Nsid {
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Cid {
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
+pub struct OtherString {
+    pub description: Option<String>,
     pub known_values: Option<Vec<String>>,
+    pub default: Option<String>,
+    pub max_graphemes: Option<u64>,
+    pub max_length: Option<u64>,
+}
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub enum LexString {
+    Datetime(Datetime),
+    Uri(Uri),
+    AtUri(AtUri),
+    Did(Did),
+    Handle(Handle),
+    AtIdentifier(AtIdentifier),
+    Nsid(Nsid),
+    Cid(Cid),
+    OtherString(OtherString),
+}
+
+impl<'de> Deserialize<'de> for LexString {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let mut object: serde_json::Map<String, serde_json::Value> =
+            Deserialize::deserialize(deserializer)?;
+        let format = object.remove("format");
+        let object = serde_json::Value::Object(object);
+        match format {
+            Some(v) => match v.as_str().unwrap() {
+                "did" => Ok(LexString::Did(serde_json::from_value(object).map_err(
+                    |err| {
+                        println!("did {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize did definition, err: {:?}",
+                            err
+                        ))
+                    },
+                )?)),
+                "handle" => Ok(LexString::Handle(serde_json::from_value(object).map_err(
+                    |err| {
+                        println!("handle {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize handle definition, err: {:?}",
+                            err
+                        ))
+                    },
+                )?)),
+                "datetime" => Ok(LexString::Datetime(
+                    serde_json::from_value(object).map_err(|err| {
+                        println!("datetime {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize datetime definition, err: {:?}",
+                            err
+                        ))
+                    })?,
+                )),
+                "at-uri" => Ok(LexString::AtUri(serde_json::from_value(object).map_err(
+                    |err| {
+                        println!("at-uri {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize at-uri definition, err: {:?}",
+                            err
+                        ))
+                    },
+                )?)),
+                "at-identifier" => Ok(LexString::AtIdentifier(
+                    serde_json::from_value(object).map_err(|err| {
+                        println!("at-identifier {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize at-identifier definition, err: {:?}",
+                            err
+                        ))
+                    })?,
+                )),
+                "nsid" => Ok(LexString::Nsid(serde_json::from_value(object).map_err(
+                    |err| {
+                        println!("nsid {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize nsid definition, err: {:?}",
+                            err
+                        ))
+                    },
+                )?)),
+                "uri" => Ok(LexString::Uri(serde_json::from_value(object).map_err(
+                    |err| {
+                        println!("uri {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize uri definition, err: {:?}",
+                            err
+                        ))
+                    },
+                )?)),
+                "cid" => Ok(LexString::Cid(serde_json::from_value(object).map_err(
+                    |err| {
+                        println!("cid {:?}", err);
+                        serde::de::Error::custom(format!(
+                            "failed to deserialize cid definition, err: {:?}",
+                            err
+                        ))
+                    },
+                )?)),
+                v => {
+                    println!("unknown format: {:?}", v);
+                    Err(serde::de::Error::custom(format!("unknown format: {:?}", v)))
+                }
+            },
+            None => Ok(LexString::OtherString(
+                serde_json::from_value(object).map_err(|err| {
+                    println!("other {:?}", err);
+                    serde::de::Error::custom(format!(
+                        "failed to deserialize string definition, err: {}",
+                        err
+                    ))
+                })?,
+            )),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -189,9 +334,9 @@ impl<'de> Deserialize<'de> for ObjectField {
             .ok_or_else(|| serde::de::Error::custom("`type` field is not a string"))?;
         match r#type {
             "string" | "integer" | "boolean" => Ok(ObjectField::Primitive(
-                serde_json::from_value(object).map_err(|_| {
+                serde_json::from_value(object).map_err(|err| {
                     serde::de::Error::custom(
-                        "failed to deserialize primitive object field definition",
+                        format!("failed to deserialize primitive object field definition, inner error: {:?}", err),
                     )
                 })?,
             )),
