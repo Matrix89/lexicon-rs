@@ -6,8 +6,13 @@ use quote::{format_ident, quote};
 use crate::{lex::r#ref::gen_ref_variant, CodeGen};
 
 impl CodeGen {
+    pub fn gen_output(&self, name: &String, body: XrpcBody) -> (TokenStream, TokenStream) {
+        let name = format!("{}Output", name.to_case(Case::Pascal));
+        self.gen_body(&name, body)
+    }
+
     pub fn gen_body(&self, name: &String, body: XrpcBody) -> (TokenStream, TokenStream) {
-        match body.encoding {
+        match &body.encoding {
             Some(encoding) if encoding.as_str() == "application/json" => {
                 let name = format!("{}", name.to_case(Case::Pascal));
                 let schema = body.schema.unwrap();
@@ -24,7 +29,7 @@ impl CodeGen {
                 (quote! {#name}, code)
             }
             Some(v) => {
-                println!("Unsupported output encoding: {:?}", v);
+                println!("Unsupported body encoding: {:?}", v);
                 (quote! {()}, quote! {})
             }
             _ => (quote! {()}, quote! {}),

@@ -10,24 +10,12 @@ fn gen_body(namespace: &String, parameters: &Parameters) -> TokenStream {
         "wss://bsky.social/xrpc/{}",
         namespace.replace("::", ".").replace(".lexicon.", ""),
     );
-    let params = parameters
-        .clone()
-        .properties
-        .unwrap_or_default()
-        .iter()
-        .filter(|(k, v)| matches!(v, lexicon::lexicon::Parameter::Primitive(_)))
-        .map(|(k, v)| {
-            let ident = format_ident!("{}", k.to_case(Case::Snake));
-            quote! {
-                .param(#k.to_string(), #ident.to_string())
-            }
-        })
-        .collect::<TokenStream>();
+    let params = CodeGen::gen_parameters_body(&parameters.properties);
     quote! {
-        let query = XrpcSubscription::new(#url.to_string())
-            #params
-        .token(token);
-        query.subscribe();
+        let mut req = XrpcSubscription::new(#url.to_string());
+        #params
+        req.token(token);
+        req.subscribe();
     }
 }
 impl CodeGen {
@@ -41,12 +29,12 @@ impl CodeGen {
         let desc = format!("{}", sub.description.unwrap_or("no desc".to_owned()));
         let params = sub.parameters.unwrap_or_default();
         let body = gen_body(&namespace, &params);
-        let parameters = self.gen_parameters(&params);
+        let arguments = self.gen_arguments(&params);
         quote! {
             #[doc=#desc]
             use xrpc::error::XrpcError;
             use xrpc::subscription::XrpcSubscription;
-            pub fn #name(token: &String, #parameters) {
+            pub fn #name(token: &String, #arguments) {
                 #body
             }
         }

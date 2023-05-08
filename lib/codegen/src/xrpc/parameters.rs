@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use convert_case::{Case, Casing};
 use lexicon::lexicon::{ArrayItem, Parameter, Parameters, Primitive};
 use proc_macro2::TokenStream;
@@ -6,9 +8,9 @@ use quote::{format_ident, quote};
 use crate::CodeGen;
 
 impl CodeGen {
-    pub fn gen_parameters(&self, parameters: &Parameters) -> TokenStream {
-        let properties = parameters.properties.clone().unwrap_or_default();
-        let required = parameters.required.clone().unwrap_or_default();
+    pub fn gen_arguments(&self, parameters: &Parameters) -> TokenStream {
+        let properties = parameters.properties.clone();
+        let required = parameters.required.clone();
 
         let mut properties = properties.into_iter().collect::<Vec<_>>();
         properties.sort_by(|a, b| a.0.cmp(&b.0));
@@ -38,5 +40,27 @@ impl CodeGen {
                 }
             })
             .collect()
+    }
+
+    pub fn gen_parameters_body(properties: &HashMap<String, Parameter>) -> TokenStream {
+        properties
+            .iter()
+            .map(|(k, v)| match v {
+                Parameter::Primitive(_) => {
+                    let ident = format_ident!("{}", k.to_case(Case::Snake));
+                    quote! {
+                        req.param(#k.to_string(), #ident.to_string());
+                    }
+                }
+                Parameter::Array(_) => {
+                    let ident = format_ident!("{}", k.to_case(Case::Snake));
+                    quote! {
+                        for ident in #ident {
+                            req.param(#k.to_string(), ident.to_string());
+                        }
+                    }
+                }
+            })
+            .collect::<TokenStream>()
     }
 }

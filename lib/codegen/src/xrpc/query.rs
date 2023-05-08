@@ -1,64 +1,44 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{Parameters, XrpcQuery};
+use lexicon::lexicon::{Parameter, Parameters, XrpcQuery};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::{doc_builder::DocBuilder, CodeGen};
 
-fn gen_body(
-    name: &str,
-    namespace: &String,
-    parameters: Parameters,
-    output_type: &TokenStream,
-    output: &TokenStream,
-) -> TokenStream {
+fn gen_body(namespace: &String, parameters: Parameters, output_type: &TokenStream) -> TokenStream {
     let url = format!(
         "https://bsky.social/xrpc/{}",
         namespace.replace("::", ".").replace(".lexicon.", ""),
     );
-    let params = parameters
-        .properties
-        .unwrap_or_default()
-        .iter()
-        .filter(|(k, v)| matches!(v, lexicon::lexicon::Parameter::Primitive(_)))
-        .map(|(k, v)| {
-            let ident = format_ident!("{}", k.to_case(Case::Snake));
-            quote! {
-                .param(#k.to_string(), #ident.to_string())
-            }
-        })
-        .collect::<TokenStream>();
+    let params = CodeGen::gen_parameters_body(&parameters.properties);
     quote! {
-        let query = XrpcQuery::new(#url.to_string())
-            #params
-        .token(token);
-        query.execute::<#output_type>().await
+        let mut req = XrpcQuery::new(#url.to_string());
+        #params
+        req.token(token);
+        req.execute::<#output_type>().await
     }
 }
 
 impl CodeGen {
     pub fn gen_query(&self, namespace: &String, name: &String, query: XrpcQuery) -> TokenStream {
-        let mut doc = DocBuilder::new();
-        doc.add_optional_item("Description", &query.description);
-
-        let queryParams = query.parameters.unwrap_or_default();
-        let parameters = self.gen_parameters(&queryParams);
-        let (output_type, output) = self.gen_body(
-            &format!("{}Output", name.to_case(Case::Pascal)),
-            query.output.unwrap_or_default(),
-        );
-        let body = gen_body(name, namespace, queryParams, &output_type, &output);
+        let arguments = self.gen_arguments(&query.parameters);
+        let (output_type, output) = self.gen_output(name, query.output.unwrap_or_default());
+        let body = gen_body(namespace, query.parameters, &output_type);
 
         let name = format_ident!("{}", name.to_case(Case::Snake));
 
-        let doc = doc.build();
+        let doc = {
+            let mut doc = DocBuilder::new();
+            doc.add_optional_item("Description", &query.description);
+            doc.build()
+        };
 
         quote! {
             #output
             #doc
             use xrpc::error::XrpcError;
             use xrpc::query::XrpcQuery;
-            pub async fn #name(token: &String, #parameters) -> Result<#output_type, XrpcError> {
+            pub async fn #name(token: &String, #arguments) -> Result<#output_type, XrpcError> {
                 #body
             }
         }

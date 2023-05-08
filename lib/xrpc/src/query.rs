@@ -7,7 +7,7 @@ use crate::error::XrpcError;
 #[derive(Debug)]
 pub struct XrpcQuery {
     url: String,
-    params: HashMap<String, String>,
+    params: Vec<(String, String)>,
     token: Option<String>,
 }
 
@@ -15,19 +15,17 @@ impl XrpcQuery {
     pub fn new(url: String) -> Self {
         Self {
             url,
-            params: HashMap::new(),
+            params: vec![],
             token: None,
         }
     }
 
-    pub fn param(mut self, name: String, value: String) -> Self {
-        self.params.insert(name, value);
-        self
+    pub fn param(&mut self, name: String, value: String) {
+        self.params.push((name, value));
     }
 
-    pub fn token(mut self, token: &String) -> Self {
+    pub fn token(&mut self, token: &String) {
         self.token = Some(token.clone());
-        self
     }
 
     pub async fn execute<Output>(self) -> Result<Output, XrpcError>
@@ -58,7 +56,7 @@ impl XrpcQuery {
             let output = serde_json::from_str::<Output>(&text);
             match output {
                 Ok(output) => Ok(output),
-                Err(e) => Err(XrpcError::Decode(e, /*text.clone()*/ "".to_string())),
+                Err(e) => Err(XrpcError::Decode(e, text.clone())),
             }
         }
     }

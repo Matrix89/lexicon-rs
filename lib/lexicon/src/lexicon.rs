@@ -107,8 +107,10 @@ pub enum Parameter {
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub struct Parameters {
-    pub required: Option<Vec<String>>,
-    pub properties: Option<HashMap<String, Parameter>>,
+    #[serde(default)]
+    pub required: Vec<String>,
+    #[serde(default)]
+    pub properties: HashMap<String, Parameter>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -127,7 +129,8 @@ pub struct XrpcBody {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct XrpcQuery {
     pub description: Option<String>,
-    pub parameters: Option<Parameters>,
+    #[serde(default)]
+    pub parameters: Parameters,
     pub output: Option<XrpcBody>,
     pub errors: Option<Vec</* TODO */ JSONValue>>,
 }

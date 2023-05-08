@@ -22,14 +22,12 @@ impl XrpcSubscription {
         }
     }
 
-    pub fn param(mut self, name: String, value: String) -> Self {
+    pub fn param(&mut self, name: String, value: String) {
         self.params.insert(name, value);
-        self
     }
 
-    pub fn token(mut self, token: &String) -> Self {
+    pub fn token(&mut self, token: &String) {
         self.token = Some(token.clone());
-        self
     }
 
     pub async fn subscribe(self) -> Result<(), XrpcError> {
