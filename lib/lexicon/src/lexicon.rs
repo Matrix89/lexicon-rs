@@ -67,6 +67,7 @@ pub struct OtherString {
     pub default: Option<String>,
     pub max_graphemes: Option<u64>,
     pub max_length: Option<u64>,
+    pub min_length: Option<u64>,
 }
 
 #[derive(Serialize, Debug, Clone)]
