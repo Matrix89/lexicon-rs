@@ -10,14 +10,12 @@ pub mod lex;
 pub mod xrpc;
 
 pub struct CodeGen {
-    tree: NSIDNode,
-
     docs: bool,
 }
 
 impl CodeGen {
-    pub fn new(tree: NSIDNode) -> Self {
-        Self { tree, docs: true }
+    pub fn new() -> Self {
+        Self { docs: true }
     }
 
     fn gen_def(self: &CodeGen, namespace: &String, def: (String, UserType)) -> TokenStream {

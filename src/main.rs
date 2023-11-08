@@ -28,7 +28,7 @@ fn main() {
         root.add(&lexicon.id, lexicon.defs);
     }
 
-    let gen = CodeGen::new(root.clone());
+    let gen = CodeGen::new();
 
     let tokens = gen.gen(root, &"".to_owned());
     println!("Gen ok");
