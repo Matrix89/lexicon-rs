@@ -7,10 +7,12 @@ use std::{
 
 use convert_case::{Case, Casing};
 use lex::union::gen_union;
-use lexicon::lexicon::{LexString, UserType};
+use lexicon::lexicon::{ArrayItem, LexString, UserType};
 use nsid::NSIDNode;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
+
+use crate::lex::array::gen_array;
 
 mod doc_builder;
 pub mod lex;
@@ -55,6 +57,14 @@ impl CodeGen {
                 }
             }
             UserType::Record(record) => self.gen_record(&def.0, record, namespace),
+            UserType::Array(of) => {
+                let (_, inner, additional_code) = gen_array(&def.0, of, &namespace);
+                let name = format_ident!("{}", def.0.to_case(Case::Pascal));
+                quote! {
+                    pub type #name = #inner;
+                    #additional_code
+                }
+            }
             _ => {
                 println!("Unsupported top level UserType: {:?}", def);
                 quote! {}
