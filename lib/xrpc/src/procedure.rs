@@ -34,8 +34,8 @@ where
         self
     }
 
-    pub fn token(mut self, token: &String) -> Self {
-        self.token = Some(token.clone());
+    pub fn token(mut self, token: &str) -> Self {
+        self.token = Some(token.to_owned());
         self
     }
 
@@ -65,10 +65,10 @@ where
         if response.get("error").is_some() {
             let error = response["error"].as_str().unwrap();
             let message = response["message"].as_str().unwrap();
-            return Err(XrpcError::Xrpc {
+            Err(XrpcError::Xrpc {
                 error: error.to_string(),
                 message: message.to_string(),
-            });
+            })
         } else {
             let output = serde_json::from_str::<Output>(&text);
             match output {

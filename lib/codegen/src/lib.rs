@@ -7,7 +7,7 @@ use std::{
 
 use convert_case::{Case, Casing};
 use lex::union::gen_union;
-use lexicon::lexicon::{ArrayItem, LexString, UserType};
+use lexicon::lexicon::{LexString, UserType};
 use nsid::NSIDNode;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -31,7 +31,7 @@ impl CodeGen {
         }
     }
 
-    fn gen_def(self: &CodeGen, namespace: &String, def: (String, UserType)) -> TokenStream {
+    fn gen_def(self: &CodeGen, namespace: &str, def: (String, UserType)) -> TokenStream {
         match def.1 {
             UserType::Object(obj) => self.gen_object(&def.0, namespace, obj),
             UserType::XrpcQuery(query) => self.gen_query(namespace, &def.0, query),
@@ -58,7 +58,7 @@ impl CodeGen {
             }
             UserType::Record(record) => self.gen_record(&def.0, record, namespace),
             UserType::Array(of) => {
-                let (_, inner, additional_code) = gen_array(&def.0, of, &namespace);
+                let (_, inner, additional_code) = gen_array(&def.0, of, namespace);
                 let name = format_ident!("{}", def.0.to_case(Case::Pascal));
                 quote! {
                     pub type #name = #inner;
@@ -74,7 +74,7 @@ impl CodeGen {
 
     pub fn gen_lexicon(
         self: &CodeGen,
-        base_path: &PathBuf,
+        base_path: &Path,
         node: NSIDNode,
         namespace: &String,
         is_root: bool,

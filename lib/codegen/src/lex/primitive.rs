@@ -9,9 +9,9 @@ use super::{object::gen_field_name, union::gen_union};
 impl CodeGen {
     pub fn gen_primitive(
         &self,
-        name: &String,
+        name: &str,
         primitive: Primitive,
-        ns: &String,
+        ns: &str,
         doc: &mut DocBuilder,
     ) -> (Ident, TokenStream, Option<TokenStream>) {
         match primitive {

@@ -109,7 +109,7 @@ impl NSIDNode {
         }
     }
 
-    pub fn find(self: &NSIDNode, path: &String) -> Option<UserType> {
+    pub fn find(self: &NSIDNode, path: &str) -> Option<UserType> {
         let mut namespace_ident = path.split('#');
         let namespace = namespace_ident
             .next()

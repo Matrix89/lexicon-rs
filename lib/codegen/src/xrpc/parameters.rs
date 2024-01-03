@@ -10,7 +10,6 @@ use crate::CodeGen;
 impl CodeGen {
     pub fn gen_arguments(&self, parameters: &Parameters) -> TokenStream {
         let properties = parameters.properties.clone();
-        let required = parameters.required.clone();
 
         let mut properties = properties.into_iter().collect::<Vec<_>>();
         properties.sort_by(|a, b| a.0.cmp(&b.0));

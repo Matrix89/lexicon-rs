@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde_json::json;
 
 use crate::error::XrpcError;
@@ -24,8 +22,8 @@ impl XrpcQuery {
         self.params.push((name, value));
     }
 
-    pub fn token(&mut self, token: &String) {
-        self.token = Some(token.clone());
+    pub fn token(&mut self, token: &str) {
+        self.token = Some(token.to_owned());
     }
 
     pub async fn execute<Output>(self) -> Result<Output, XrpcError>
@@ -48,10 +46,10 @@ impl XrpcQuery {
         if response.get("error").is_some() {
             let error = response["error"].as_str().unwrap();
             let message = response["message"].as_str().unwrap();
-            return Err(XrpcError::Xrpc {
+            Err(XrpcError::Xrpc {
                 error: error.to_string(),
                 message: message.to_string(),
-            });
+            })
         } else {
             let output = serde_json::from_str::<Output>(&text);
             match output {
@@ -62,6 +60,6 @@ impl XrpcQuery {
     }
 
     pub async fn execute_untyped(self) -> Result<serde_json::Value, XrpcError> {
-        return self.execute::<serde_json::Value>().await;
+        self.execute::<serde_json::Value>().await
     }
 }

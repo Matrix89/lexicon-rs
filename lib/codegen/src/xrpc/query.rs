@@ -5,7 +5,7 @@ use quote::{format_ident, quote};
 
 use crate::{doc_builder::DocBuilder, CodeGen};
 
-fn gen_body(namespace: &String, parameters: &Parameters, output_type: &TokenStream) -> TokenStream {
+fn gen_body(namespace: &str, parameters: &Parameters, output_type: &TokenStream) -> TokenStream {
     let url = format!(
         "https://bsky.social/xrpc/{}",
         namespace.replace("::", ".").replace(".lexicon.", ""),
@@ -20,7 +20,7 @@ fn gen_body(namespace: &String, parameters: &Parameters, output_type: &TokenStre
 }
 
 impl CodeGen {
-    pub fn gen_query(&self, namespace: &String, name: &String, query: XrpcQuery) -> TokenStream {
+    pub fn gen_query(&self, namespace: &str, name: &str, query: XrpcQuery) -> TokenStream {
         let arguments = self.gen_arguments(&query.parameters);
         let (output_type, output) = self.gen_output(name, query.output.unwrap_or_default());
         let body = gen_body(namespace, &query.parameters, &output_type);

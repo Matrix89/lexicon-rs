@@ -5,9 +5,9 @@ use quote::quote;
 use super::{object::build_ref_target, union::gen_union};
 
 pub fn gen_ref_variant(
-    name: &String,
+    name: &str,
     variant: RefVariant,
-    ns: &String,
+    ns: &str,
 ) -> (TokenStream, Option<TokenStream>) {
     match variant {
         RefVariant::Ref(r#ref) => {

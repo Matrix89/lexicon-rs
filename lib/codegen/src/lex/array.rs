@@ -4,11 +4,7 @@ use quote::quote;
 
 use super::{object::gen_field_name, r#ref::gen_ref_variant};
 
-pub fn gen_array(
-    name: &String,
-    array: Array,
-    ns: &String,
-) -> (Ident, TokenStream, Option<TokenStream>) {
+pub fn gen_array(name: &str, array: Array, ns: &str) -> (Ident, TokenStream, Option<TokenStream>) {
     let (array_type, additional_code) = match *array.items {
         ArrayItem::Primitive(Primitive::String(_)) => (quote! { String }, None),
         ArrayItem::Primitive(Primitive::Boolean(_)) => (quote! { bool }, None),

@@ -5,7 +5,7 @@ use quote::{format_ident, quote};
 
 use crate::{doc_builder::DocBuilder, CodeGen};
 
-use super::{array::gen_array, r#ref::gen_ref_variant, union::gen_union};
+use super::{array::gen_array, r#ref::gen_ref_variant};
 
 pub fn build_ref_target(r#ref: &str) -> syn::Path {
     let ref_target = if r#ref.starts_with('#') {
@@ -40,9 +40,9 @@ pub fn gen_field_name(name: &str) -> Ident {
 impl CodeGen {
     fn gen_property(
         &self,
-        name: &String,
-        namespace: &String,
-        object_name: &String,
+        name: &str,
+        namespace: &str,
+        object_name: &str,
         property: ObjectField,
         is_required: bool,
         is_nullable: bool,
@@ -78,7 +78,6 @@ impl CodeGen {
                 quote! { ::serde_json::Value },
                 None,
             ),
-            _ => todo!("{:?}", property),
         };
 
         let prop = if is_nullable || !is_required {
@@ -107,12 +106,7 @@ impl CodeGen {
         (property_code, additional_code)
     }
 
-    pub fn gen_object(
-        &self,
-        object_name: &String,
-        namespace: &String,
-        object: Object,
-    ) -> TokenStream {
+    pub fn gen_object(&self, object_name: &str, namespace: &str, object: Object) -> TokenStream {
         let properties = object.properties.unwrap_or_default();
         let required = object.required.unwrap_or_default();
         let nullable = object.nullable.unwrap_or_default();

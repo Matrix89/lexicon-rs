@@ -1,16 +1,11 @@
 use convert_case::{Case, Casing};
-use lexicon::lexicon::{Parameters, XrpcBody, XrpcProcedure, JV};
+use lexicon::lexicon::XrpcProcedure;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::{doc_builder::DocBuilder, CodeGen};
 
-fn gen_body(
-    name: &str,
-    namespace: &String,
-    output_type: &TokenStream,
-    output: &TokenStream,
-) -> TokenStream {
+fn gen_body(namespace: &str, output_type: &TokenStream) -> TokenStream {
     let url = format!(
         "https://bsky.social/xrpc/{}",
         namespace.replace("::", ".").replace(".lexicon.", ""),
@@ -27,12 +22,7 @@ fn gen_body(
 }
 
 impl CodeGen {
-    pub fn gen_procedure(
-        &self,
-        namespace: &String,
-        name: &String,
-        proc: XrpcProcedure,
-    ) -> TokenStream {
+    pub fn gen_procedure(&self, namespace: &str, name: &str, proc: XrpcProcedure) -> TokenStream {
         let mut doc = DocBuilder::new();
         doc.add_optional_item("Description", &proc.description);
 
@@ -47,7 +37,7 @@ impl CodeGen {
             proc.input.unwrap_or_default(),
         );
 
-        let body = gen_body(&name, &namespace, &output_type, &output);
+        let body = gen_body(namespace, &output_type);
 
         let name = format_ident!("{}", name.to_case(Case::Snake));
 

@@ -24,7 +24,7 @@ fn main() -> Result<()> {
         root.add(&lexicon.id, lexicon.defs);
     }
 
-    fs::remove_dir_all("lib/test/src/lexicon");
+    let _ = fs::remove_dir_all("lib/test/src/lexicon");
     let gen = CodeGen::new("lib/test/src".into());
 
     gen.gen(root, &"".to_owned())?;

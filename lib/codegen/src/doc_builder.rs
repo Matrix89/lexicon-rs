@@ -72,3 +72,9 @@ impl DocBuilder {
         }
     }
 }
+
+impl Default for DocBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}

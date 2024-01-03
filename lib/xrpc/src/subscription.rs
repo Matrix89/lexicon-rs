@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use futures::StreamExt;
-use serde_json::json;
 use tokio_tungstenite::connect_async;
 
 use crate::error::XrpcError;
@@ -26,8 +25,8 @@ impl XrpcSubscription {
         self.params.insert(name, value);
     }
 
-    pub fn token(&mut self, token: &String) {
-        self.token = Some(token.clone());
+    pub fn token(&mut self, token: &str) {
+        self.token = Some(token.to_owned());
     }
 
     pub async fn subscribe(self) -> Result<(), XrpcError> {
