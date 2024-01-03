@@ -1,11 +1,11 @@
+use anyhow::Result;
 use codegen::CodeGen;
 use lexicon::doc::LexiconDoc;
 use nsid::NSIDNode;
-use rust_format::{Formatter, RustFmt};
 use std::{fs, str::FromStr};
 use walkdir::WalkDir;
 
-fn main() {
+fn main() -> Result<()> {
     let lexicons = WalkDir::new("/home/matrix89/Development/atproto/lexicons")
         .into_iter()
         .filter_map(|f| f.ok())
@@ -20,35 +20,22 @@ fn main() {
 
     let mut root = NSIDNode::root();
 
-    for lexicon in lexicons
-    //.skip(50)
-    /*.take(15)*/
-    {
-        //println!("{}:", lexicon.id);
+    for lexicon in lexicons {
         root.add(&lexicon.id, lexicon.defs);
     }
 
-    let gen = CodeGen::new();
+    fs::remove_dir_all("lib/test/src/lexicon");
+    let gen = CodeGen::new("lib/test/src".into());
 
-    let tokens = gen.gen(root, &"".to_owned());
-    println!("Gen ok");
-    let src = RustFmt::default().format_str(tokens.to_string());
-    match src {
-        Ok(src) => {
-            fs::remove_file("lib/test/src/lex.rs").unwrap();
-            fs::write("lib/test/src/lex.rs", src).unwrap();
-        }
-        Err(err) => println!("{}", err),
-    }
-    //println!("{}", src);
-
-    /*std::process::Command::new("rustc")
-    .stdout(std::process::Stdio::inherit())
-    .arg("--crate-type")
-    .arg("lib")
-    .arg("lib/test/src/lex.rs")
-    .spawn()
-    .unwrap()
-    .wait()
-    .unwrap();*/
+    gen.gen(root, &"".to_owned())?;
+    // println!("Gen ok");
+    // let src = RustFmt::default().format_str(tokens.to_string());
+    // match src {
+    //     Ok(src) => {
+    //         fs::remove_file("lib/test/src/lex.rs").unwrap();
+    //         fs::write("lib/test/src/lex.rs", src).unwrap();
+    //     }
+    //     Err(err) => println!("{}", err),
+    // }
+    Ok(())
 }

@@ -85,6 +85,11 @@ impl CodeGen {
                         }
                     }
                 }
+                LexString::Language => {
+                    let name = gen_field_name(name);
+                    let prop_type = quote! { lexicon::language::Language };
+                    (name, prop_type, None)
+                }
             },
             Primitive::Boolean(boolean) => {
                 doc.add_optional_item("description", &boolean.description);

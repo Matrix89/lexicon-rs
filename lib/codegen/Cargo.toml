@@ -10,3 +10,5 @@ convert_case = "0.6.0"
 syn = {version = "2.0.15", features = ["full"]}
 lexicon = { path = "../lexicon" }
 nsid = { path = "../nsid" }
+anyhow = "1.0.79"
+prettyplease = "0.2.16"

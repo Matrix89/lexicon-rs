@@ -15,6 +15,7 @@ syn = {version = "2.0.15", features = ["full"]}
 lexicon = { path = "lib/lexicon" }
 codegen = { path = "lib/codegen" }
 nsid = { path = "lib/nsid" }
+anyhow = "1.0.79"
 
 [workspace]
 members = [

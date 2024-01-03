@@ -93,7 +93,7 @@ impl NSIDNode {
 
     fn find_impl(self: &NSIDNode, path: Vec<&str>, ident: &str) -> Option<UserType> {
         match self {
-            NSIDNode::Segment { name, children } => {
+            NSIDNode::Segment { children, .. } => {
                 let child = children.iter().find(|child| match child {
                     NSIDNode::Segment {
                         name: child_name, ..
@@ -101,22 +101,29 @@ impl NSIDNode {
                     NSIDNode::Identifier { name, .. } => name == path[0],
                 });
 
-                return child?.find_impl(path[1..].to_vec(), ident);
+                child?.find_impl(path[1..].to_vec(), ident)
             }
-            NSIDNode::Identifier { name, def } => {
+            NSIDNode::Identifier { def, .. } => {
                 return def.get(ident).cloned();
             }
         }
     }
 
     pub fn find(self: &NSIDNode, path: &String) -> Option<UserType> {
-        let mut namespace_ident = path.split("#");
+        let mut namespace_ident = path.split('#');
         let namespace = namespace_ident
             .next()
             .unwrap()
-            .split(".")
+            .split('.')
             .collect::<Vec<&str>>();
         let ident = namespace_ident.next().unwrap_or("main");
-        return self.find_impl(namespace, ident);
+        self.find_impl(namespace, ident)
+    }
+
+    pub fn name(self: &NSIDNode) -> String {
+        match self {
+            NSIDNode::Segment { name, .. } => name.to_string(),
+            NSIDNode::Identifier { name, .. } => name.to_string(),
+        }
     }
 }

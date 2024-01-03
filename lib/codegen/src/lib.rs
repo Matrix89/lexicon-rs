@@ -1,3 +1,10 @@
+use anyhow::{Context, Result};
+use std::{
+    fs,
+    io::Write,
+    path::{Path, PathBuf},
+};
+
 use convert_case::{Case, Casing};
 use lex::union::gen_union;
 use lexicon::lexicon::{LexString, UserType};
@@ -11,11 +18,15 @@ pub mod xrpc;
 
 pub struct CodeGen {
     docs: bool,
+    base_path: PathBuf,
 }
 
 impl CodeGen {
-    pub fn new() -> Self {
-        Self { docs: true }
+    pub fn new(base_path: PathBuf) -> Self {
+        Self {
+            docs: true,
+            base_path,
+        }
     }
 
     fn gen_def(self: &CodeGen, namespace: &String, def: (String, UserType)) -> TokenStream {
@@ -51,34 +62,76 @@ impl CodeGen {
         }
     }
 
-    pub fn gen_lexicon(self: &CodeGen, node: NSIDNode, namespace: &String) -> TokenStream {
+    pub fn gen_lexicon(
+        self: &CodeGen,
+        base_path: &PathBuf,
+        node: NSIDNode,
+        namespace: &String,
+        is_root: bool,
+    ) -> Result<()> {
         match node {
             NSIDNode::Segment { name, children } => {
-                let children = children.into_iter().map(|child| {
+                let path = base_path.join(&name);
+                fs::create_dir(&path)?;
+                let children_names = children
+                    .iter()
+                    .map(|c| c.name())
+                    .map(|name| format_ident!("{}", name.to_case(Case::Snake)))
+                    .collect::<Vec<_>>();
+                for child in children {
+                    let name = format_ident!("{}", child.name().to_case(Case::Snake));
+
                     self.gen_lexicon(
+                        &path,
                         child,
                         &format!("{}::{}", namespace, name)
                             .to_owned()
                             .replace("/main", ""),
-                    )
-                });
-                if name == "lexicon" {
-                    quote! {
-                        #[allow(unused_imports)]
-                        use super::lexicon;
-                        #(#children)*
-                    }
-                } else {
-                    let name = format_ident!("{}", name.to_case(Case::Snake));
+                        false,
+                    )?;
+                }
+                let mod_def = if is_root {
+                    let xrpc_preamble = xrpc::preamble::gen_preamble();
+                    let lexicon_preamble = quote! {
+                        pub mod did {
+                            pub type Did = String;
+                        }
+                        pub mod cid {
+                            pub type Cid = String;
+                        }
+                        pub mod handle {
+                            pub type Handle = String;
+                        }
+                        pub mod at_uri {
+                            pub type AtUri = String;
+                        }
+                        pub mod at_identifier {
+                            pub type AtIdentifier = String;
+                        }
+                        pub mod nsid {
+                            pub type Nsid = String;
+                        }
+                        pub mod url {
+                            pub type Url = String;
+                        }
+                    };
 
                     quote! {
-                        pub mod #name {
-                            #[allow(unused_imports)]
-                            use super::lexicon;
-                            #(#children)*
+                        pub mod lexicon {
+                            #xrpc_preamble
+                            #lexicon_preamble
+                            #(pub use super::#children_names;)*
                         }
+                        #(pub mod #children_names;)*
                     }
-                }
+                } else {
+                    quote! {
+                        use super::lexicon;
+                        #(pub mod #children_names;)*
+                    }
+                };
+                write_source(path.join("mod.rs"), mod_def)
+                    .with_context(|| format!("writing mod def {:?}", name))?;
             }
             NSIDNode::Identifier { name, def } => {
                 let defs = def.into_iter().map(|def| {
@@ -90,53 +143,31 @@ impl CodeGen {
                     )
                 });
                 let name = format_ident!("{}", name.to_case(Case::Snake));
-                quote! {
-                    pub mod #name {
-                        #[allow(unused_imports)]
-                        use super::lexicon;
-                        #[derive(Debug, Clone, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
-                        pub struct Unimplemented;
-                        #(#defs)*
-                    }
-                }
-            }
-        }
-    }
-
-    pub fn gen(self: &CodeGen, node: NSIDNode, namespace: &String) -> TokenStream {
-        let lexicon = self.gen_lexicon(node, namespace);
-
-        let xrpc_preamble = xrpc::preamble::gen_preamble();
-        let lexicon_preamble = quote! {
-            pub mod did {
-                pub type Did = String;
-            }
-            pub mod cid {
-                pub type Cid = String;
-            }
-            pub mod handle {
-                pub type Handle = String;
-            }
-            pub mod at_uri {
-                pub type AtUri = String;
-            }
-            pub mod at_identifier {
-                pub type AtIdentifier = String;
-            }
-            pub mod nsid {
-                pub type Nsid = String;
-            }
-            pub mod url {
-                pub type Url = String;
+                let source = quote! {
+                    #[allow(unused_imports)]
+                    use super::lexicon;
+                    #(#defs)*
+                };
+                let file = base_path.join(format!("{}.rs", name));
+                write_source(&file, source)
+                    .with_context(|| format!("writing source for {}", file.display()))?;
             }
         };
-
-        quote! {
-            #xrpc_preamble
-            pub mod lexicon {
-                #lexicon_preamble
-                #lexicon
-            }
-        }
+        Ok(())
     }
+
+    pub fn gen(self: &CodeGen, node: NSIDNode, namespace: &String) -> Result<()> {
+        self.gen_lexicon(&self.base_path, node, namespace, true)?;
+
+        Ok(())
+    }
+}
+
+pub fn write_source<P: AsRef<Path>>(path: P, content: TokenStream) -> Result<()> {
+    let mut formatted = Vec::new();
+    let syntax_tree: syn::File = syn::parse2(content)?;
+    let pretty = prettyplease::unparse(&syntax_tree);
+    write!(formatted, "{}", pretty)?;
+    fs::write(path, formatted)?;
+    Ok(())
 }

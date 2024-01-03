@@ -29,6 +29,7 @@ pub fn build_ref_target(r#ref: &str) -> syn::Path {
 pub fn gen_field_name(name: &str) -> Ident {
     let name = name.to_case(Case::Snake);
     let name = match name.as_str() {
+        "ref" => format!("r#{}", name),
         "type" => format!("r#{}", name),
         v => String::from(v),
     };

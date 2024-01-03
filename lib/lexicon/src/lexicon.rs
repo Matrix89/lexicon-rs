@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
-use serde::{
-    de::{MapAccess, Visitor},
-    Deserialize, Deserializer, Serialize,
-};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value as JSONValue;
 
 pub type XrpcParameter = String;
@@ -68,6 +65,7 @@ pub struct OtherString {
     pub max_graphemes: Option<u64>,
     pub max_length: Option<u64>,
     pub min_length: Option<u64>,
+    pub r#enum: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -82,6 +80,7 @@ pub enum LexString {
     Nsid(Nsid),
     Cid(Cid),
     OtherString(OtherString),
+    Language,
 }
 
 impl<'de> Deserialize<'de> for LexString {
@@ -167,6 +166,7 @@ impl<'de> Deserialize<'de> for LexString {
                         ))
                     },
                 )?)),
+                "language" => Ok(LexString::Language),
                 v => {
                     println!("unknown format: {:?}", v);
                     Err(serde::de::Error::custom(format!("unknown format: {:?}", v)))
